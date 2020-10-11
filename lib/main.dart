@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
+import 'package:volks_demo/Presenter/SignInPresenter.dart';
+import 'package:volks_demo/Views/SignUpPage.dart';
 import 'package:volks_demo/Views/homepage.dart';
 import 'Views/loginpage.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MyApp());
@@ -11,8 +13,16 @@ void main() {
 
 String username;
 
+
+class ILoginView{
+
+  void UpdateLoginMessage(SignInViewModel MessageViewModel){}
+
+}
+
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+
+  MyApp(); // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,35 +43,35 @@ class MyApp extends StatelessWidget {
 }
 
 class Login extends StatefulWidget {
+  final SignInPresenter presenter = new SignInPresenter();
+
   @override
   State<StatefulWidget> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<Login> implements ILoginView  {
+
   TextEditingController controlleurUsername = new TextEditingController();
   TextEditingController controlleurPassword = new TextEditingController();
-
+  SignInViewModel signInViewModel;
   String message = '';
-  Future<List> Login() async {
-    final response =
-        await http.post("http://10.0.2.2/project_db/login.php", body: {
-      "username": controlleurUsername.text,
-      "password": controlleurPassword.text,
-    });
 
-    var datauser = json.decode(response.body);
+  @override
+  void didUpdateWidget(Login oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
 
-    if (datauser.length == 0) {
-      setState(() {
-        message = "user not found";
-      });
-    } else {
-      Navigator.pushReplacementNamed(context, '/loginpage');
-    }
+    this.widget.presenter.loginView = this;
+
+  }
+
+  @override
+  void UpdateLoginMessage(SignInViewModel MessageViewModel) {
+
     setState(() {
-      username = datauser[0]['username'];
+      this.message = MessageViewModel.Message;
     });
-    return datauser;
+
   }
 
   @override
@@ -116,7 +126,7 @@ class _LoginState extends State<Login> {
                             Icons.email,
                             color: Colors.black,
                           ),
-                          hintText: 'username'),
+                          hintText: 'Username'),
                     ),
                   ),
                   Container(
@@ -137,6 +147,7 @@ class _LoginState extends State<Login> {
                     ),
                     child: TextFormField(
                       controller: controlleurPassword,
+                      obscureText: true,
                       decoration: InputDecoration(
                           icon: Icon(
                             Icons.vpn_key,
@@ -145,34 +156,36 @@ class _LoginState extends State<Login> {
                           hintText: 'password'),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 6,
-                        right: 32,
-                      ),
-                      child: Text(
-                        'Save Password',
-                        style: TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
+
                   Spacer(),
-                  new RaisedButton(
-                    child: new Text("login"),
-                    color: Colors.pinkAccent,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30.0),
-                    ),
-                    onPressed: () {
-                      Login();
-                      //Navigator.pop(context);
-                      //
-                    },
-                  ),
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     children: [RaisedButton(
+                       child: new Text("login"),
+                       color: Colors.pinkAccent,
+                       shape: new RoundedRectangleBorder(
+                         borderRadius: new BorderRadius.circular(30.0),
+                       ),
+                       onPressed: ()  {
+
+                         this.widget.presenter.doSignIn(controlleurUsername.text, controlleurPassword.text);
+
+                         },
+                     ),RaisedButton(
+                       child: new Text("Sign Up"),
+                       color: Colors.pinkAccent,
+                       shape: new RoundedRectangleBorder(
+                         borderRadius: new BorderRadius.circular(30.0),
+                       ),
+                       onPressed: ()  {
+
+
+                         Navigator.push(context, MaterialPageRoute( builder: (context)=> SignUpPage()));
+
+
+                       },
+                     )],
+                   ),
                   Text(
                     message,
                     style: TextStyle(fontSize: 25.0, color: Colors.red),
@@ -185,4 +198,5 @@ class _LoginState extends State<Login> {
       )),
     );
   }
+
 }
