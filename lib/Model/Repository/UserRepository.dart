@@ -16,8 +16,8 @@ class UserRepository{
 
   Future<User> getUser(String route,[dynamic args]) async
 {
-  route = getFormatedRoute(route,args);
-  var url = URL+route;
+
+  var url = getServerURL(route,args);
   var response = await http.get(url);
 
   if(response.statusCode == 200)
@@ -43,10 +43,10 @@ class UserRepository{
 
   Future<int> addUser(String route,User user) async
   {
-    route = getFormatedRoute(route,[]);
-    var url = URL+route;
 
+    var url = getServerURL(route,[]);
     var response = await http.post(url,body: jsonEncode(user),headers: {"Content-Type":"application/json"});
+
 
     if(response.statusCode == 200)
     {

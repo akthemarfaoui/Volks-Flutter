@@ -54,7 +54,6 @@ String ErrorMessage = "";
     // TODO: implement initState
     super.initState();
     this.widget.signUpPresenter.signUpView = this;
-
 }
 
   @override
@@ -65,14 +64,14 @@ String ErrorMessage = "";
 
   }
 
-@override
-void UpdateSignUpPage(SignUpViewModel signUpViewModel) {
+  @override
+  void UpdateSignUpPage(SignUpViewModel signUpViewModel) {
 
-setState(() {
+  setState(() {
 
-  this.ErrorMessage = signUpViewModel.ErrorMessage;
+    this.ErrorMessage = signUpViewModel.ErrorMessage;
 
-});
+  });
 
 }
 

@@ -1,22 +1,19 @@
 
 import 'package:volks_demo/Model/Repository/UserRepository.dart';
 import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
+import 'package:volks_demo/Views/SignInPage.dart';
 
 
-import '../main.dart';
 
 
 class IPresenter{
-
 
   void doSignIn(String TypedUsername,String TypedPassword)
   {
 
   }
 
-
 }
-
 
 class SignInPresenter implements IPresenter{
 
@@ -26,7 +23,7 @@ class SignInPresenter implements IPresenter{
 
   SignInPresenter()
   {
-    this.signInViewModel = new SignInViewModel("");
+    this.signInViewModel = new SignInViewModel("",false);
     this.userRepository =  new UserRepository();
   }
 
@@ -42,29 +39,31 @@ class SignInPresenter implements IPresenter{
           {
 
               this.signInViewModel.Message = "User not found",
-              this.loginView.UpdateLoginMessage(this.signInViewModel)
+              this.signInViewModel.AccessGranted = false,
+              this.loginView.UpdateLoginMessage(this.signInViewModel),
+
 
           }else{
-
-            this.signInViewModel.Message = "",
-          this.loginView.UpdateLoginMessage(this.signInViewModel),
-
 
           if(!TypedPassword.isEmpty)
             {
               if(value.password == TypedPassword){
 
+                this.signInViewModel.AccessGranted = true,
+                this.signInViewModel.ConnectedUser = value,
                 this.signInViewModel.Message = "",
                 this.loginView.UpdateLoginMessage(this.signInViewModel)
 
               }else{
 
+                this.signInViewModel.AccessGranted = false,
                 this.signInViewModel.Message = "Wrong password",
                 this.loginView.UpdateLoginMessage(this.signInViewModel)
 
               }
             }else{
 
+              this.signInViewModel.AccessGranted = false,
               this.signInViewModel.Message = "Password field is required",
               this.loginView.UpdateLoginMessage(this.signInViewModel)
           }
@@ -74,10 +73,15 @@ class SignInPresenter implements IPresenter{
       });
     }else{
 
+      this.signInViewModel.AccessGranted = false;
       this.signInViewModel.Message = "Username field is required";
       this.loginView.UpdateLoginMessage(this.signInViewModel);
 
     }
+
+
+
+
 
   }
 

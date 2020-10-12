@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import "package:http/http.dart" as http;
+import 'package:intl/intl.dart';
 
 const String PORT = "3003";
-const  String DOMAIN = "192.168.1.7";
+const String DOMAIN = "192.168.1.7";
 const String URL = "http://$DOMAIN:$PORT";
 
-String getFormatedRoute(String route,[dynamic data])
+String getServerURL(String route,[dynamic data])
 {
   String argData = "";
   for(dynamic arg in data)
@@ -25,8 +26,17 @@ String getFormatedRoute(String route,[dynamic data])
       {
     route = "/"+route;
   }
-  return route;
+
+
+  return URL+route;
 }
 
+
+DateTime getFormatedDate(DateTime dateTime)
+{
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  final String formatted = formatter.format(dateTime);
+  return DateTime.parse(formatted);
+}
 
 

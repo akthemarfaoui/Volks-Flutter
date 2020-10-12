@@ -1,0 +1,17 @@
+
+class IProfilePresenter
+{
+
+
+
+}
+
+
+class ProfilePresenter
+{
+
+
+
+
+
+}

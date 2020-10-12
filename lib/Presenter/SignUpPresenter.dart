@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/Repository/UserRepository.dart';
 import 'package:volks_demo/Model/ViewModel/SignUpViewModel.dart';
+import 'package:volks_demo/Utils/HttpConfig.dart';
 import 'package:volks_demo/Views/SignUpPage.dart';
 
 import '../main.dart';
@@ -11,6 +12,7 @@ class ISignUpPresenter{
 
 void doSignUp(var value,var dateTime,String Username ,String Password, String ConfirmPassword)
 {
+
 
 
 }
@@ -24,6 +26,7 @@ class SignUpPresenter implements ISignUpPresenter
 
   SignUpViewModel signUpViewModel;
   ISignUpView signUpView;
+
   UserRepository userRepository;
 
   SignUpPresenter()
@@ -37,9 +40,6 @@ class SignUpPresenter implements ISignUpPresenter
 
     bool accessGranted = false;
 
-
-    print(value);
-
     if(Username != ""  )
     {
       if(Password!="")
@@ -48,21 +48,18 @@ class SignUpPresenter implements ISignUpPresenter
         {
           if(dateTime != null)
           {
-
            if(value !=null)
              {
-
                if(Password == ConfirmPassword)
                {
 
-
                  accessGranted = true;
-
 
                }else{
 
                  this.signUpViewModel.ErrorMessage = "Confirm Password & Password doesnt match !";
                  this.signUpView.UpdateSignUpPage(this.signUpViewModel);
+
                }
 
              }else{
@@ -92,7 +89,6 @@ class SignUpPresenter implements ISignUpPresenter
 
 
 
-
 if(accessGranted)
   {
 
@@ -100,21 +96,20 @@ if(accessGranted)
 
     if(value == 1)
     {
-      sexe ="Female";
+
+      sexe = "Female";
+
     }else if(value == 2)
     {
+
       sexe = "Male";
+
     }
-
-
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    final String formatted = formatter.format(dateTime);
-    print(formatted);
 
     this.signUpViewModel.ErrorMessage = "";
     this.signUpView.UpdateSignUpPage(this.signUpViewModel);
 
-    User user = new User.AnotherCtor(Username, Password, sexe, DateTime.parse(formatted));
+    User user = new User.AnotherCtor(Username, Password, sexe, getFormatedDate(dateTime));
 
     userRepository.getUser("/users/get/",[user.username]).then((value) => {
 
@@ -130,10 +125,6 @@ if(accessGranted)
     });
 
   }
-
-
-
-
 
   }
 
