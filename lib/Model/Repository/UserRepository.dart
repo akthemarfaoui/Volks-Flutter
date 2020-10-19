@@ -59,6 +59,23 @@ class UserRepository {
           " URI = " +
           response.request.url.toString());
     }
+  }
+
+  Future<int> updateUser(String route, User user) async {
+    var url = getServerURL(route, []);
+
+    //print(jsonEncode(user));
+    var response = await http.put(url,
+        body: jsonEncode(user), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode == 200) {
+      return response.statusCode;
+    } else {
+      throw Exception("Thabet ya bhim => status code= " +
+          response.statusCode.toString() +
+          " URI = " +
+          response.request.url.toString());
+    }
     // return compute(parseUser,response.body);
   }
 }

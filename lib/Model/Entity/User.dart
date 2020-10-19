@@ -34,6 +34,11 @@ class User{
    'password': password,
    'sexe': sexe,
    'birth_date': birth_date,
+   'first_name': first_name,
+   'last_name': last_name,
+   'phone_number': phone_number,
+   'address': address,
+   'job': job,
  };
 
 factory User.fromJson(Map<String, dynamic> json) {
