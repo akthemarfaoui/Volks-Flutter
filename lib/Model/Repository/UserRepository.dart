@@ -46,4 +46,19 @@ class UserRepository {
     }
     // return compute(parseUser,response.body);
   }
+
+  Future<List<User>> fetchUsers(String route) async {
+    var url = getServerURL(route, []);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return parseUser(response.body);
+    } else {
+      throw Exception("Thabet ya bhim => status code= " +
+          response.statusCode.toString() +
+          " URI = " +
+          response.request.url.toString());
+    }
+    // return compute(parseUser,response.body);
+  }
 }
