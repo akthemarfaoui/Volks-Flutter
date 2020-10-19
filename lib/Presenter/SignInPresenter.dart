@@ -1,64 +1,73 @@
+import 'package:volks_demo/Model/Entity/User.dart';
+import 'package:volks_demo/Model/Repository/PostRepository.dart';
+import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/Repository/UserRepository.dart';
 import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
 import 'package:volks_demo/Views/SignInPage.dart';
+import 'package:volks_demo/main.dart';
 
 class IPresenter {
-  void doSignIn(String TypedUsername, String TypedPassword) {}
+  void doTrySignIn(String TypedUsername, String TypedPassword) {}
 }
 
 class SignInPresenter implements IPresenter {
   UserRepository userRepository;
   SignInViewModel signInViewModel;
   ILoginView loginView;
+  UserLSRepository userLSRepository;
 
   SignInPresenter() {
-    this.signInViewModel = new SignInViewModel("", false);
+    this.signInViewModel = new SignInViewModel(0,"", false);
     this.userRepository = new UserRepository();
+    this.userLSRepository= new UserLSRepository();
   }
 
   @override
-  void doSignIn(String TypedUsername, String TypedPassword) {
-    print(TypedUsername);
-    print(TypedPassword);
+  void doTrySignIn(String TypedUsername, String TypedPassword) {
 
-    if (!TypedUsername.isEmpty) {
-      userRepository.getUser("/users/get/", [TypedUsername]).then((value) => {
-            if (value == null)
-              {
-                this.signInViewModel.Message = "User not found",
-                this.signInViewModel.AccessGranted = false,
-                this.loginView.UpdateLoginMessage(this.signInViewModel),
-              }
-            else
-              {
-                if (!TypedPassword.isEmpty)
-                  {
-                    if (value.password == TypedPassword)
-                      {
-                        this.signInViewModel.AccessGranted = true,
-                        this.signInViewModel.ConnectedUser = value,
-                        this.signInViewModel.Message = "",
-                        this.loginView.UpdateLoginMessage(this.signInViewModel)
-                      }
-                    else
-                      {
-                        this.signInViewModel.AccessGranted = false,
-                        this.signInViewModel.Message = "Wrong password",
-                        this.loginView.UpdateLoginMessage(this.signInViewModel)
-                      }
-                  }
-                else
-                  {
-                    this.signInViewModel.AccessGranted = false,
-                    this.signInViewModel.Message = "Password field is required",
-                    this.loginView.UpdateLoginMessage(this.signInViewModel)
-                  }
-              }
-          });
-    } else {
-      this.signInViewModel.AccessGranted = false;
-      this.signInViewModel.Message = "Username field is required";
-      this.loginView.UpdateLoginMessage(this.signInViewModel);
-    }
+    PostRepository ps = PostRepository();
+    ps.fetchPosts("/posts/getAll/").then((value) => print(value));
+
+    if(TypedUsername!="" && TypedPassword !="")
+      {
+        userRepository.getUser("/users/get/", [TypedUsername]).then((value) => {
+          if (value == null)
+            {
+              this.signInViewModel.AccessGranted = false,
+              this.signInViewModel.Message = "User Not Found",
+              this.signInViewModel.ErrorCode = 1,
+              this.loginView.UpdateLoginMessage(this.signInViewModel),
+
+            }
+          else
+            {
+              if (value.password == TypedPassword)
+                {
+
+                  this.signInViewModel.AccessGranted = true,
+                  this.signInViewModel.ConnectedUser = value,
+                  this.signInViewModel.Message = "",
+                  this.signInViewModel.ErrorCode = 0,
+                  this.loginView.UpdateLoginMessage(this.signInViewModel),
+
+                }
+              else
+                {
+                  this.signInViewModel.AccessGranted = false,
+                  this.signInViewModel.Message = "Wrong Password",
+                  this.signInViewModel.ErrorCode = 2,
+                  this.loginView.UpdateLoginMessage(this.signInViewModel),
+
+                }
+
+            },
+
+        });
+
+      }
+
+
   }
+
+
 }

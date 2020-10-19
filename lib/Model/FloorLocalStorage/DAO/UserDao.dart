@@ -14,8 +14,11 @@ abstract class UserDao
 
   @insert
   Future<void> insertUser(UserLS userLS);
+
   @Query('DELETE FROM UserLS WHERE id = :id')
   Future<void> delete(int id);
 
+  @Query('DELETE FROM UserLS')
+  Future<void> deleteAll();
 
 }

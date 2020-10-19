@@ -1,21 +1,20 @@
 import 'package:volks_demo/Model/Entity/Post.dart';
 import 'package:volks_demo/Model/Repository/PostRepository.dart';
-import 'package:volks_demo/Model/ViewModel/PostViewModel.dart';
-import 'package:volks_demo/Utils/HttpConfig.dart';
-import 'package:volks_demo/Views/homepage.dart';
+import 'package:volks_demo/Model/ViewModel/AddPostViewModel.dart';
+import 'package:volks_demo/Views/AddPostPage.dart';
 
-class IPostPresenter {
+class IAddPostPresenter {
   void doAddPost(String Username, String Description) {}
 }
 
-class PostPresenter implements IPostPresenter {
-  PostViewModel postViewModel;
-  IPostView postView;
+class AddPostPresenter implements IAddPostPresenter {
+  AddPostViewModel addPostViewModel;
+  IAddPostView iAddPostView;
 
   PostRepository postRepository;
 
-  PostPresenter() {
-    postViewModel = new PostViewModel("");
+  AddPostPresenter() {
+    addPostViewModel = new AddPostViewModel("");
     postRepository = new PostRepository();
   }
 
@@ -26,8 +25,8 @@ class PostPresenter implements IPostPresenter {
     if (Description != "") {
       accessGranted = true;
     } else {
-      this.postViewModel.ErrorMessage = "Description field is required";
-      this.postView.UpdatePostPage(this.postViewModel);
+      this.addPostViewModel.ErrorMessage = "Description field is required";
+      this.iAddPostView.UpdatePostPage(this.addPostViewModel);
     }
 
     if (accessGranted) {

@@ -7,6 +7,7 @@ class SignInViewModel
 String Message;
 bool AccessGranted;
 User ConnectedUser;
+int ErrorCode;
 
-SignInViewModel(this.Message,this.AccessGranted);
+SignInViewModel(this.ErrorCode,this.Message,this.AccessGranted);
 }

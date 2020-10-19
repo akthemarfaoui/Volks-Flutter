@@ -1,7 +1,7 @@
 import 'package:volks_demo/Model/Entity/User.dart';
 
-class PostViewModel {
+class AddPostViewModel {
   String ErrorMessage;
 
-  PostViewModel(this.ErrorMessage);
+  AddPostViewModel(this.ErrorMessage);
 }

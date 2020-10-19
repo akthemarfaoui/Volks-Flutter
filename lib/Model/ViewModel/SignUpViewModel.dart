@@ -5,6 +5,8 @@ class SignUpViewModel
 {
 String ErrorMessage;
 
-SignUpViewModel(this.ErrorMessage);
+int ErrorCode;
+
+SignUpViewModel(this.ErrorCode,this.ErrorMessage);
 
 }

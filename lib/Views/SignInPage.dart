@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:volks_demo/Model/ViewModel/PostViewModel.dart';
+import 'package:volks_demo/Model/ViewModel/AddPostViewModel.dart';
 import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
 import 'package:volks_demo/Presenter/SignInPresenter.dart';
 import 'package:volks_demo/Views/HomePage.dart';
@@ -36,10 +36,13 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> implements ILoginView {
-  TextEditingController controlleurUsername = new TextEditingController();
-  TextEditingController controlleurPassword = new TextEditingController();
   SignInViewModel signInViewModel;
   String message = '';
+  String _username = '';
+  String _password = '';
+  int errorCode = 0;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -59,18 +62,22 @@ class _LoginState extends State<Login> implements ILoginView {
 
   @override
   void UpdateLoginMessage(SignInViewModel signInViewModel) {
-    setState(() {
-      this.message = signInViewModel.Message;
 
+    setState(() {
       if (signInViewModel.AccessGranted) {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => HomePage(signInViewModel.ConnectedUser)));
-        print(signInViewModel.ConnectedUser.username);
-        //  Navigator.push(context, MaterialPageRoute( builder: (context)=> HomePage(signInViewModel.ConnectedUser)));
+
+      }else{
+
+        this.errorCode = signInViewModel.ErrorCode;
+        this.message = signInViewModel.Message;
 
       }
+      _formKey.currentState.validate();
+
     });
   }
 
@@ -79,6 +86,7 @@ class _LoginState extends State<Login> implements ILoginView {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Form(
+        key: _formKey,
           child: Container(
         decoration: new BoxDecoration(
             image: new DecorationImage(
@@ -120,13 +128,31 @@ class _LoginState extends State<Login> implements ILoginView {
                       ],
                     ),
                     child: TextFormField(
-                      controller: controlleurUsername,
                       decoration: InputDecoration(
                           icon: Icon(
                             Icons.email,
                             color: Colors.black,
                           ),
                           hintText: 'Username'),
+                      validator: (value){
+
+                        print("validator "+errorCode.toString());
+
+                      if(value.isEmpty)
+                        {
+                          return 'Username Field Is Required';
+                        }else{
+
+                        if(errorCode == 1)
+                          {
+                          return message;
+                          }else{
+                          return null;
+                        }
+                      }
+                      },
+                      onSaved: (value)=>_username = value,
+
                     ),
                   ),
                   Container(
@@ -146,7 +172,6 @@ class _LoginState extends State<Login> implements ILoginView {
                       ],
                     ),
                     child: TextFormField(
-                      controller: controlleurPassword,
                       obscureText: true,
                       decoration: InputDecoration(
                           icon: Icon(
@@ -154,6 +179,25 @@ class _LoginState extends State<Login> implements ILoginView {
                             color: Colors.black,
                           ),
                           hintText: 'password'),
+
+                      validator: (value){
+                        print(value);
+                        if(value.isEmpty)
+                        {
+
+                          return 'Password Field Is Required';
+
+                        }else{
+
+                          if(errorCode == 2)
+                          {
+                            return message;
+                          }else{
+                            return null;
+                          }
+                        }
+                      },
+                      onSaved: (value)=> _password = value,
                     ),
                   ),
                   Spacer(),
@@ -167,9 +211,14 @@ class _LoginState extends State<Login> implements ILoginView {
                           borderRadius: new BorderRadius.circular(30.0),
                         ),
                         onPressed: () {
-                          this.widget.presenter.doSignIn(
-                              controlleurUsername.text,
-                              controlleurPassword.text);
+
+                          _formKey.currentState.save();
+                          _formKey.currentState.validate();
+
+                          this.widget.presenter.doTrySignIn(
+                              _username,
+                              _password);
+
                         },
                       ),
                       RaisedButton(
@@ -187,10 +236,6 @@ class _LoginState extends State<Login> implements ILoginView {
                       )
                     ],
                   ),
-                  Text(
-                    message,
-                    style: TextStyle(fontSize: 25.0, color: Colors.red),
-                  )
                 ],
               ),
             )

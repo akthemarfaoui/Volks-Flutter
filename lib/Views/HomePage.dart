@@ -1,110 +1,361 @@
 import 'package:flutter/material.dart';
 import 'package:volks_demo/Model/Entity/Post.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
-import 'package:volks_demo/Model/ViewModel/PostViewModel.dart';
-import 'package:volks_demo/Presenter/PostPresenter.dart';
+import 'package:volks_demo/Model/ViewModel/HomeViewModel.dart';
+import 'package:volks_demo/Presenter/HomePresenter.dart';
+import 'package:volks_demo/Utils/MyColors.dart';
+import 'package:volks_demo/Utils/UserAvatarCircle.dart';
+import 'package:volks_demo/Views/AddPostPage.dart';
+import 'package:volks_demo/Views/PostDetailPage.dart';
+import 'package:volks_demo/Views/ProfilePage.dart';
 
-import 'ProfilePage.dart';
 
-class IPostView {
-  void UpdatePostPage(PostViewModel postViewModel) {}
+
+class IHomeView
+{
+
+ void UpdateSignUpPage(HomeViewModel homeViewModel)
+ {
+
+ }
+
+
 }
-
+User USER;
 class HomePage extends StatefulWidget {
-  User user;
 
-  HomePage(this.user);
-  final PostPresenter postPresenter = new PostPresenter();
+  User user;
+  final homePresenter= new HomePresenter();
+  HomePage(this.user){
+    USER = user;
+  }
   @override
-  State<StatefulWidget> createState() => HomeState();
+  State<StatefulWidget> createState() => HomePageState();
 }
 
-class HomeState extends State<HomePage> implements IPostView {
-  TextEditingController DescriptionTextEditController = TextEditingController();
 
-  Post post;
+class HomePageState extends State<HomePage> implements IHomeView {
+  List<Post> postsList = [];
+  Future<List<Post>> fpostsList;
 
-  DateTime finaldate;
+  @override
+  void UpdateSignUpPage(HomeViewModel homeViewModel) {
 
-  PostViewModel postViewModel;
-  String ErrorMessage = "";
+    setState(() {
+
+      this.postsList = homeViewModel.listPost;
+      this.fpostsList = homeViewModel.FuturelistPost;
+
+    });
+
+  }
+
+Future<List<Post>> getData() async {
+    return this.fpostsList;
+  }
+
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    this.widget.homePresenter.iHomeView = this;
+
+    this.widget.homePresenter.doGetPosts();
+    getData().then((d) {
+      setState(() {
+        loading = false;
+      });
+    });
+  }
+
+  @override
+  void didUpdateWidget(HomePage oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    this.widget.homePresenter.iHomeView = this;
+    //this.widget.homePresenter.doGetPosts();
+
+  }
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope( child:Scaffold(
+      backgroundColor: MyColors.bkColor,
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: MyColors.UpBarHome,
+
+      ),
+      body: !loading
+          ? RefreshIndicator(
+        onRefresh: () async {
+          postsList.clear();
+          await getData();
+        },
+        child: PostListView(list: postsList),
+      )
+          : Center(
+        child: CircularProgressIndicator(
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.white)),
+      ),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          // sets the background color of the `BottomNavigationBar`
+          canvasColor: Colors.white,
+          // sets the active color of the `BottomNavigationBar` if `Brightness` is light
+          primaryColor: Theme.of(context).accentColor,
+          textTheme: Theme.of(context).textTheme.copyWith(
+            caption: TextStyle(color: Colors.grey[500]),
+          ),
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(
+                  Icons.message),
+              title: Text("Messages"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.group),
+              title: Text("Volks"),
+
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              title: Text("Add"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications),
+              title: Text("Notifications"),
+
+            ),
+            BottomNavigationBarItem(
+
+              icon: Icon(Icons.person),
+              title: Text("Profile"),
+
+            ),
+          ],
+          onTap: (val){
+            print(val);
+
+            switch(val)
+            {
+              case 2:
+               {
+                 Navigator.push(
+                   context,
+                   MaterialPageRoute(
+                     builder: (context) => AddPostPage(widget.user),
+                   ),
+                 );
+                 break;
+               }
+              case 4:
+                {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(widget.user),
+                    ),
+                  );
+                  break;
+                }
+
+            }
+
+
+          },
+        ),
+      ),
+    ) ,onWillPop:() async => false);
+
+
+  }
+
+
+}
+
+class PostListView extends StatefulWidget {
+  const PostListView({
+    Key key,
+    this.list,
+  }) : super(key: key);
+  final List<Post> list;
+
+  @override
+  PostListViewState createState() {
+    return new PostListViewState();
+  }
+}
+
+class PostListViewState extends State<PostListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Posts"),
-          leading: IconButton(icon: Icon(Icons.menu), onPressed: () {}),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.person),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(this.widget.user)));
-                })
-          ],
-        ),
-        body: Form(
-          child: Container(
-            height: MediaQuery.of(context).size.height / 2,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(top: 10),
+    return ListView(
+        children: widget.list.isNotEmpty
+            ? widget.list.map((item) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 25.0),
+            child: Stack(
+              children: <Widget>[
+                GestureDetector(
+                  key: Key(item.username),
+
+                  child: PostItemView(item: item),
+                ),
+                UserAvatar(
+                  height: 50.0,
+                  width: 50.0,
+                  company: item.username,
+                ),
+              ],
+            ),
+          );
+        }).toList()
+            : []);
+  }
+}
+
+class PostItemView extends StatefulWidget {
+
+
+  const PostItemView({
+    Key key,
+    this.item,
+  }) : super(key: key);
+
+  final Post item;
+
+  @override
+  PostItemViewState createState() {
+    return PostItemViewState();
+  }
+}
+
+class PostItemViewState extends State<PostItemView>
+    with SingleTickerProviderStateMixin {
+  Animation animation;
+  AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 2));
+
+    final CurvedAnimation curvedAnimation = CurvedAnimation(
+        parent: animationController, curve: Curves.fastOutSlowIn);
+
+    animation = Tween<Offset>(begin: Offset(200.0, 0.0), end: Offset(0.0, 0.0))
+        .animate(curvedAnimation);
+
+    animationController.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: animation,
+      child: Card(
+        color: MyColors.PostColor,
+        elevation: 5.0,
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+        child: InkWell(
+          onTap: () {
+            //print(widget.item.company.trim());
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostDetailPage(widget.item,USER),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 30.0, top: 20.0, right: 10.0, bottom: 20.0),
             child: Column(
-              children: [
+              children: <Widget>[
                 Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  padding:
-                      EdgeInsets.only(top: 1, left: 2, right: 16, bottom: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                      )
-                    ],
-                  ),
-                  child: TextFormField(
-                    controller: DescriptionTextEditController,
-                    decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.textsms,
-                          color: Colors.grey,
-                        ),
-                        hintText: 'Add Post'),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    widget.item.username,
+                    style: TextStyle(
+                        fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
-                //Spacer(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    RaisedButton(
-                      child: new Text("Add"),
-                      color: Colors.purpleAccent,
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30.0),
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Flexible(
+                      child: Container(
+                        margin: EdgeInsets.only(left: 15,top: 10),
+                        height: calculateHeight(widget.item.description) ,
+                        child:Text(
+                          widget.item.description,
+                          maxLines: 8,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 20.0, color: Colors.white70),
+                        ),
                       ),
-                      onPressed: () {
-                        print(this.widget.user.username);
-                        this.widget.postPresenter.doAddPost(
-                              this.widget.user.username,
-                              DescriptionTextEditController.text,
-                            );
-                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10.0),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.date_range,
+                      color: Colors.white70,
+                    ),
+                    Text(
+                      widget.item.posted_in ?? "",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    /*Text(
+                      widget.item.position ?? "",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),*/
+                    Icon(
+                      Icons.location_city,
+                      color: Colors.white,
                     ),
                   ],
                 ),
               ],
             ),
           ),
-        ));
-  }
-
-  @override
-  void UpdatePostPage(PostViewModel signUpViewModel) {
-    // TODO: implement UpdatePostPage
+        ),
+      ),
+    );
   }
 }
+
+
+double calculateHeight(String content)
+{
+
+  //print(content.length);
+
+    if(content.length>0 && content.length<=100)
+      return 50;
+    else if(content.length>100 && content.length<200)
+      return 160;
+    else{
+      return 200;
+    }
+  
+
+
+}
+
+

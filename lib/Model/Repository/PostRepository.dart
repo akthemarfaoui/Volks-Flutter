@@ -4,11 +4,33 @@ import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Utils/HttpConfig.dart';
 import "package:http/http.dart" as http;
 
+
+
+
 class PostRepository {
+
   List<Post> parsePost(String responseBody) {
     final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<Post>((json) => Post.fromJson(json)).toList();
   }
+
+  Future<List<Post>> fetchPosts(String route) async {
+    var url = getServerURL(route,[]);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+
+      return parsePost(response.body);
+
+    } else {
+      throw Exception("Thabet ya bhim => status code= " +
+          response.statusCode.toString() +
+          " URI = " +
+          response.request.url.toString());
+    }
+    // return compute(parseUser,response.body);
+  }
+
 
   Future<Post> getPost(String route, [dynamic args]) async {
     var url = getServerURL(route, args);

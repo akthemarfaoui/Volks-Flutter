@@ -151,7 +151,12 @@ class _$UserDao extends UserDao {
   }
 
   @override
-  Future<void> insertUser(UserLS student) async {
-    await _userLSInsertionAdapter.insert(student, OnConflictStrategy.abort);
+  Future<void> deleteAll() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM UserLS');
+  }
+
+  @override
+  Future<void> insertUser(UserLS userLS) async {
+    await _userLSInsertionAdapter.insert(userLS, OnConflictStrategy.abort);
   }
 }

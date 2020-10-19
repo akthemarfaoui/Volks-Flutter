@@ -1,5 +1,7 @@
 
+import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_formfield/flutter_datetime_formfield.dart';
 import 'package:volks_demo/Model/ViewModel/SignUpViewModel.dart';
 import 'package:volks_demo/Presenter/SignUpPresenter.dart';
 
@@ -37,17 +39,22 @@ class SignUp extends StatefulWidget {
 
 class SignUpState extends State<SignUp> implements ISignUpView
 {
-
-  TextEditingController UsernameTextEditController = TextEditingController();
-  TextEditingController PasswordTextEditController =TextEditingController();
-  TextEditingController ConfirmPasswordTextEditController =TextEditingController();
-
 int valueGender;
 DateTime finaldate;
 
 SignUpViewModel signUpViewModel;
 String ErrorMessage = "";
+String _username = "";
+String _password = "";
+String _confirmPassword = "";
+String _gender = "";
+final _formKey = GlobalKey<FormState>();
+int errorCode = 0;
+DateTime _dateTime;
 
+final UsernameTextFieldController = TextEditingController();
+final PasswordTextFieldController = TextEditingController();
+final ConfirmPasswordTextFieldController = TextEditingController();
 
 @override
   void initState() {
@@ -70,38 +77,49 @@ String ErrorMessage = "";
   setState(() {
 
     this.ErrorMessage = signUpViewModel.ErrorMessage;
-
+    this.errorCode = signUpViewModel.ErrorCode;
   });
 
+  if(_formKey.currentState.validate())
+    {
+      AlertDialog alert = new AlertDialog(title: Text("User adding"),content: Text("User added successfully"),actions: [
+        FlatButton(
+          onPressed: (){
+
+            setState(() {
+
+              UsernameTextFieldController.clear();
+              PasswordTextFieldController.clear();
+              ConfirmPasswordTextFieldController.clear();
+
+            });
+
+            Navigator.of(context, rootNavigator: true)
+                .pop(false); // dismisses only the dialog and returns false
+          },
+          child: Text("Ok")
+        ),
+        FlatButton(
+            onPressed: (){
+
+            },
+            child: Text("Continue To Profile")
+        )
+      ],
+
+      );
+
+      this.widget.signUpPresenter.doSignUp(_gender,_dateTime,_username,_password,_confirmPassword).then((value) => {
+
+        showDialog(context: context,builder:(BuildContext context){
+          return alert;
+        }),
+
+      });
+
+    }
+
 }
-
-
-  void callDatePicker() async {
-    var order = await getDate();
-    setState(() {
-
-      finaldate = order;
-
-    });
-  }
-
-  Future<DateTime> getDate() {
-
-    return showDatePicker(
-      context: context,
-      initialDate: DateTime(DateTime.now().year -18),
-      firstDate: DateTime( (DateTime.now().year -100)),
-      lastDate: DateTime(DateTime.now().year -18),
-      builder: (BuildContext context, Widget child) {
-        return Theme(
-          data: ThemeData.light(),
-          child: child,
-        );
-      },
-    );
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -112,104 +130,177 @@ String ErrorMessage = "";
       ),
       body: SingleChildScrollView(
 
-        child: Column(
+        child: Form(
+          key: _formKey,
+          child: Column(
 
-          children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Username',
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                child: TextFormField(
+                  controller:UsernameTextFieldController ,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Username',
+                  ),
+                  validator: (value){
+
+                    if(value.isEmpty)
+                      {
+
+                        return "Username Field Is Required";
+
+                      }else{
+
+                      if(errorCode ==1)
+                      {
+
+                        return this.ErrorMessage;
+
+                      }else{
+
+                      }
+
+                    }
+                  },
+                  onSaved: (value)=> _username = value,
+                ) ,
               ),
-              controller: UsernameTextEditController,
-            ) ,
-          ),
 
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Password',
-                ),
-                controller: PasswordTextEditController,
-              ) ,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Confirm Password',
-                ),
-                controller: ConfirmPasswordTextEditController,
-              ) ,
-            ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                child: TextFormField(
+                  controller:PasswordTextFieldController ,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Password',
+                  ),
+                  validator: (value){
 
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-              child:
-              Row(
+                    if(value.isEmpty)
+                    {
 
-                mainAxisAlignment: MainAxisAlignment.center ,
+                      return "Password Field Is Required";
 
-                children: [DropdownButton(
-                  hint: Text("Gender"),
-                  value: valueGender,
-                  items: [
-                    DropdownMenuItem(
-                      child: Text("Female"),
-                      value: 1,
-                    ),
-                    DropdownMenuItem(
-                      child: Text("Male"),
-                      value: 2,
-                    )
-                  ],
-                  onChanged: (value)  {
-                    setState(() {
-                      valueGender = value;
-                    });
+                    }
 
                   },
-                ),
-                  RaisedButton.icon(
+                  onSaved: (value)=> _password = value,
 
-                    icon: Icon(Icons.date_range),
-                    label: Text("Birth date"),
-                    onPressed:callDatePicker,
-
-                  )
-
-                ],
-
+                ) ,
               ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
-              child: RaisedButton(onPressed: (){
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                child: TextFormField(
+                  controller: ConfirmPasswordTextFieldController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Confirm Password',
+                  ),
+                  validator: (value){
 
-                this.widget.signUpPresenter.doSignUp(valueGender,finaldate,UsernameTextEditController.text,PasswordTextEditController.text,ConfirmPasswordTextEditController.text);
+                    if(value.isEmpty)
+                    {
+                      return "Confirm Password Field Is Required";
+                    }else{
 
-              }, child: Text("Confirm"))
-            ),
+                      if(value != _password)
+                        {
+                          return "Confirm Password & Password doesnt match !";
+                        }
 
-            Container(
-                padding: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+                    }
+
+                  },
+                  onSaved: (value)=> _confirmPassword = value,
+                ) ,
+              ),
+
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
                 child:
+                Column(
 
-                Text(ErrorMessage,
-                  style: TextStyle(fontSize: 25.0, color: Colors.red),
+                  mainAxisAlignment: MainAxisAlignment.center ,
 
-                )
+                  children: [
 
-            ),
+                    DropDownFormField(
 
-          ],
+                      titleText:'Choose a Gender',
+                      hintText: _gender,
+                      onSaved: (value) {
+                        setState(() {
+                          if(value!=null)
+                            {
+                              _gender = value;
+                            }
+                        });
+                      },
 
+                      onChanged: (value) {
+                        setState(() {
+                          if(value!=null)
+                          {
+                            _gender = value;
+                          }
+                        });
+                      },
 
-        ),
+                      dataSource: [
+                        {
+                          "display":"Female",
+                          "value":"Female"
+                        },
+                        {
+                          "display":"Male",
+                          "value":"Male"
+                        }
+                      ],
+                      textField: 'display',
+                      valueField: 'value',
+                        validator: (value){
+                        if(value == null)
+                          {
+                            return "Gender Field Is Required";
+                          }
+
+                        },
+                    ),
+                    DateTimeFormField(
+                      onlyDate: true,
+
+                      initialValue: DateTime(DateTime.now().year -18),
+                      firstDate: DateTime((DateTime.now().year - 100)),
+                      lastDate: DateTime(DateTime.now().year -18),
+
+                      label: "Birth Date",
+                      validator: (DateTime dateTime) {
+                        if (dateTime == null) {
+                          return "Date Time Required";
+                        }
+                          return null;
+                        },
+                      onSaved: (DateTime dateTime) => _dateTime = dateTime,
+                      )
+                  ],
+
+                ),
+              ),
+              Container(
+                  padding: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+                  child: RaisedButton(onPressed: (){
+                    _formKey.currentState.save();
+                    _formKey.currentState.validate();
+                    this.widget.signUpPresenter.doCheckUsernameExist(_username);
+
+                  }, child: Text("Confirm"))
+              ),
+
+            ],
+
+          ),
+        )
 
       ),
 

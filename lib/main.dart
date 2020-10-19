@@ -18,9 +18,11 @@ void genDb() async
   final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   final UserDao = database.userDao;
   final user = UserLS();
-  await UserDao.insertUser(user);
-  final result = await UserDao.findUserById(1);
 
+  UserDao.deleteAll();
+  await UserDao.insertUser(user);
+  List<UserLS> result = await UserDao.findAllUsers();
+  print(result.length);
 
 }
 
