@@ -51,6 +51,7 @@ class HomePageState extends State<HomePage> implements IHomeView {
   }
 
 Future<List<Post>> getData() async {
+    this.widget.homePresenter.doGetPosts();
     return this.fpostsList;
   }
 
@@ -97,7 +98,7 @@ Future<List<Post>> getData() async {
       )
           : Center(
         child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(Colors.white)),
+            valueColor: new AlwaysStoppedAnimation<Color>(MyColors.PostColor)),
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -139,6 +140,7 @@ Future<List<Post>> getData() async {
             ),
           ],
           onTap: (val){
+
             print(val);
 
             switch(val)
@@ -245,7 +247,7 @@ class PostItemViewState extends State<PostItemView>
   void initState() {
     super.initState();
     animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
 
     final CurvedAnimation curvedAnimation = CurvedAnimation(
         parent: animationController, curve: Curves.fastOutSlowIn);
