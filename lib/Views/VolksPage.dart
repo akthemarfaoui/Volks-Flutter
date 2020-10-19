@@ -74,17 +74,17 @@ class _VolksPageHomeState extends State<VolksPage> implements IVolksView {
       key: _scaffoldKey,
       body: ListView.builder(
         padding: const EdgeInsets.all(8),
-        //itemCount: usersList.length,
-        // itemBuilder: (BuildContext context, int index) {
-        // User user = usersList.elementAt(index);
+        /* itemCount: usersList.length,
+        itemBuilder: (BuildContext context, int index) {
+          User user = usersList.elementAt(index);
 
-        // return GestureDetector(
-        //    onTap: () {
-        //  Navigator.push(context, MaterialPageRoute(builder: (context) => ));
-        //      },
-        //     child: UserCustomWidget(user.first_name, user.username));
-        // },
-
+          return GestureDetector(
+              onTap: () {
+                //  Navigator.push(context, MaterialPageRoute(builder: (context) => ));
+              },
+              child: UserCustomWidget(user.first_name, user.username));
+        },
+*/
         itemCount: usersList.length,
         itemBuilder: (context, index) => ListTile(
           title: Text(
