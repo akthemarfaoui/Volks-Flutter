@@ -1,24 +1,24 @@
 
 import 'package:floor/floor.dart';
-import 'package:volks_demo/Model/FloorLocalStorage/Entity/UserLS.dart';
+import 'package:volks_demo/Model/Entity/User.dart';
 
 @dao
 abstract class UserDao
 {
 
-  @Query('SELECT * FROM UserLS')
-  Future<List<UserLS>> findAllUsers();
+  @Query('SELECT * FROM User')
+  Future<List<User>> findAllUsers();
 
-  @Query('SELECT * FROM UserLS WHERE id = :id')
-  Stream<UserLS> findUserById(int id);
+  @Query('SELECT * FROM User WHERE id = :id')
+  Stream<User> findUserById(int id);
 
   @insert
-  Future<void> insertUser(UserLS userLS);
+  Future<void> insertUser(User userLS);
 
-  @Query('DELETE FROM UserLS WHERE id = :id')
+  @Query('DELETE FROM User WHERE id = :id')
   Future<void> delete(int id);
 
-  @Query('DELETE FROM UserLS')
+  @Query('DELETE FROM User')
   Future<void> deleteAll();
 
 }

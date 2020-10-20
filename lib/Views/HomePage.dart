@@ -8,6 +8,7 @@ import 'package:volks_demo/Utils/UserAvatarCircle.dart';
 import 'package:volks_demo/Views/AddPostPage.dart';
 import 'package:volks_demo/Views/PostDetailPage.dart';
 import 'package:volks_demo/Views/ProfilePage.dart';
+import 'package:volks_demo/Views/SignInPage.dart';
 
 
 
@@ -25,7 +26,9 @@ User USER;
 class HomePage extends StatefulWidget {
 
   User user;
+
   final homePresenter= new HomePresenter();
+
   HomePage(this.user){
     USER = user;
   }
@@ -87,6 +90,38 @@ Future<List<Post>> getData() async {
         elevation: 0.0,
         backgroundColor: MyColors.UpBarHome,
 
+      ),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('Username:   => ' + widget.user.username),
+              decoration: BoxDecoration(
+                color: MyColors.UpBarHome,
+              ),
+            ),
+
+            ListTile(
+              title: Text('Disconnect'),
+              onTap: () {
+
+                widget.homePresenter.doLogout();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignInPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: !loading
           ? RefreshIndicator(
@@ -246,6 +281,7 @@ class PostItemViewState extends State<PostItemView>
   @override
   void initState() {
     super.initState();
+
     animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
 

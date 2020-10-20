@@ -119,7 +119,4 @@ class AddPostPageSatate extends State<AddPostPage> implements IAddPostView {
         ));
   }
 
-
-
-
 }

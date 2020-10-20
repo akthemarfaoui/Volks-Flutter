@@ -1,4 +1,5 @@
 import 'package:volks_demo/Model/Entity/User.dart';
+import 'package:volks_demo/Model/FloorLocalStorage/Database/AppDatabase.dart';
 import 'package:volks_demo/Model/Repository/PostRepository.dart';
 import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/Repository/UserRepository.dart';
@@ -7,7 +8,13 @@ import 'package:volks_demo/Views/SignInPage.dart';
 import 'package:volks_demo/main.dart';
 
 class IPresenter {
-  void doTrySignIn(String TypedUsername, String TypedPassword) {}
+  void doTrySignIn(bool RemeberMe,String TypedUsername, String TypedPassword) {}
+
+  void doCheckForRemeberMe()
+  {
+
+  }
+
 }
 
 class SignInPresenter implements IPresenter {
@@ -23,7 +30,7 @@ class SignInPresenter implements IPresenter {
   }
 
   @override
-  void doTrySignIn(String TypedUsername, String TypedPassword) {
+  void doTrySignIn(bool RemeberMe,String TypedUsername, String TypedPassword) {
 
     PostRepository ps = PostRepository();
     ps.fetchPosts("/posts/getAll/").then((value) => print(value));
@@ -43,6 +50,12 @@ class SignInPresenter implements IPresenter {
             {
               if (value.password == TypedPassword)
                 {
+
+                  if(RemeberMe)
+                    {
+                      userLSRepository.deleteAll(),
+                      userLSRepository.insertUser(value),
+                    },
 
                   this.signInViewModel.AccessGranted = true,
                   this.signInViewModel.ConnectedUser = value,
@@ -68,6 +81,21 @@ class SignInPresenter implements IPresenter {
 
 
   }
+
+  @override
+  void doCheckForRemeberMe() {
+    UserLSRepository userLSRepository = new UserLSRepository();
+    userLSRepository.findAll().then((value) => {
+      if(value.length != 0)
+        {
+          this.signInViewModel.UserRemebered = value[0],
+          this.loginView.UpdateRemeberedUser(signInViewModel)
+        }
+    });
+
+  }
+
+
 
 
 }
