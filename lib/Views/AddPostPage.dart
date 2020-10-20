@@ -4,6 +4,7 @@ import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/ViewModel/AddPostViewModel.dart';
 import 'package:volks_demo/Presenter/AddPostPresenter.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
+import 'package:volks_demo/Views/HomePage.dart';
 
 import 'ProfilePage.dart';
 
@@ -82,7 +83,7 @@ class AddPostPageSatate extends State<AddPostPage> implements IAddPostView {
                           Icons.edit,
                           color: Colors.grey,
                         ),
-                        hintText: 'Add your post here'),
+                        hintText: 'Write your post here'),
                   ),
                 ),
                 Spacer(),
@@ -90,7 +91,7 @@ class AddPostPageSatate extends State<AddPostPage> implements IAddPostView {
                   width: MediaQuery.of(context).size.width / 1.5,
                   height: MediaQuery.of(context).size.width / 10,
                   child: RaisedButton(
-                    child: new Text("Add"),
+                    child: new Text("Add Post"),
                     textColor: MyColors.bkColor,
                     color: MyColors.PostColor,
                     shape: new RoundedRectangleBorder(
@@ -112,7 +113,7 @@ class AddPostPageSatate extends State<AddPostPage> implements IAddPostView {
                       );
                       // set up the AlertDialog
                       AlertDialog alert = AlertDialog(
-                        title: Text("My title"),
+                        title: Text("Done"),
                         content: Text("Post Added Successfully"),
                         actions: [
                           okButton,
