@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:volks_demo/Model/ViewModel/AddPostViewModel.dart';
+import 'package:volks_demo/Model/Entity/User.dart';
+import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
 import 'package:volks_demo/Presenter/SignInPresenter.dart';
 import 'package:volks_demo/Views/HomePage.dart';
 import 'package:volks_demo/Views/SignUpPage.dart';
-import 'package:volks_demo/main.dart';
 
 class ILoginView {
   void UpdateLoginMessage(SignInViewModel signInViewModel) {}
+  void UpdateRemeberedUser(SignInViewModel signInViewModel){}
 }
 
 class SignInPage extends StatelessWidget {
@@ -36,21 +37,25 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> implements ILoginView {
+
   SignInViewModel signInViewModel;
   String message = '';
   String _username = '';
   String _password = '';
   int errorCode = 0;
-
+  bool _rememberMe =false;
+  User userRembered;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     this.widget.presenter.loginView = this;
+    this.widget.presenter.doCheckForRemeberMe();
   }
+
+
 
   @override
   void didUpdateWidget(Login oldWidget) {
@@ -60,6 +65,15 @@ class _LoginState extends State<Login> implements ILoginView {
     this.widget.presenter.loginView = this;
   }
 
+  @override
+  void UpdateRemeberedUser(SignInViewModel signInViewModel) {
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(signInViewModel.UserRemebered)));
+
+  }
   @override
   void UpdateLoginMessage(SignInViewModel signInViewModel) {
 
@@ -85,7 +99,7 @@ class _LoginState extends State<Login> implements ILoginView {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: Form(
+      body:  Form(
         key: _formKey,
           child: Container(
         decoration: new BoxDecoration(
@@ -115,6 +129,7 @@ class _LoginState extends State<Login> implements ILoginView {
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width / 1.2,
+
                     padding:
                         EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
                     decoration: BoxDecoration(
@@ -201,41 +216,73 @@ class _LoginState extends State<Login> implements ILoginView {
                     ),
                   ),
                   Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+
+                  Column(
+
                     children: [
-                      RaisedButton(
-                        child: new Text("login"),
-                        color: Colors.pinkAccent,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0),
-                        ),
-                        onPressed: () {
 
-                          _formKey.currentState.save();
-                          _formKey.currentState.validate();
+                     /* Row(
 
-                          this.widget.presenter.doTrySignIn(
-                              _username,
-                              _password);
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Remember Me"),
+                          Checkbox(
+                            value: _rememberMe,
+                            onChanged: (value){
 
-                        },
+                              setState(() {
+
+                                _rememberMe=value;
+
+                              });
+
+                            } ,
+
+                          ),
+
+                        ],
+                      ),*/
+
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RaisedButton(
+                            child: new Text("login"),
+                            color: Colors.pinkAccent,
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0),
+                            ),
+                            onPressed: () {
+
+                              _formKey.currentState.save();
+                              _formKey.currentState.validate();
+
+                              this.widget.presenter.doTrySignIn(
+                                  _rememberMe,
+                                  _username,
+                                  _password);
+
+                            },
+                          ),
+                          RaisedButton(
+                            child: new Text("Sign Up"),
+                            color: Colors.pinkAccent,
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignUpPage()));
+                            },
+                          )
+                        ],
                       ),
-                      RaisedButton(
-                        child: new Text("Sign Up"),
-                        color: Colors.pinkAccent,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignUpPage()));
-                        },
-                      )
                     ],
-                  ),
+                  )
+
                 ],
               ),
             )
@@ -244,4 +291,6 @@ class _LoginState extends State<Login> implements ILoginView {
       )),
     );
   }
+
+
 }

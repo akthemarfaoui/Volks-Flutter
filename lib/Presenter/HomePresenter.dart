@@ -1,4 +1,5 @@
 import 'package:volks_demo/Model/Repository/PostRepository.dart';
+import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/ViewModel/HomeViewModel.dart';
 import 'package:volks_demo/Views/HomePage.dart';
 
@@ -7,6 +8,10 @@ class IHomePresenter
 
   void doGetPosts()
   {
+
+
+  }
+  void doLogout() {
 
 
   }
@@ -19,11 +24,13 @@ class HomePresenter implements IHomePresenter{
 HomeViewModel homeViewModel;
 IHomeView iHomeView;
 PostRepository postRepository;
+UserLSRepository userLSRepository;
 
 HomePresenter()
 {
  homeViewModel=new HomeViewModel(true);
  postRepository = new PostRepository();
+ userLSRepository = new UserLSRepository();
 }
   @override
   void doGetPosts() {
@@ -42,4 +49,10 @@ HomePresenter()
 
   }
 
+@override
+void doLogout() {
+
+  userLSRepository.deleteAll();
+
+}
 }

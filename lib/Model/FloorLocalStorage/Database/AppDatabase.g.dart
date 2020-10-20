@@ -65,7 +65,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 2,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
       },
@@ -80,7 +80,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `UserLS` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `username` TEXT, `password` TEXT, `email` TEXT, `first_name` TEXT, `last_name` TEXT, `phone_number` INTEGER, `address` TEXT, `partner` TEXT, `sexe` TEXT, `birth_date` TEXT, `job` TEXT, `number_children_disabilities` INTEGER, `number_children` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `username` TEXT, `password` TEXT, `email` TEXT, `first_name` TEXT, `last_name` TEXT, `phone_number` INTEGER, `address` TEXT, `partner` TEXT, `sexe` TEXT, `birth_date` TEXT, `job` TEXT, `number_children_disabilities` INTEGER, `number_children` INTEGER)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -97,10 +97,10 @@ class _$AppDatabase extends AppDatabase {
 class _$UserDao extends UserDao {
   _$UserDao(this.database, this.changeListener)
       : _queryAdapter = QueryAdapter(database, changeListener),
-        _userLSInsertionAdapter = InsertionAdapter(
+        _userInsertionAdapter = InsertionAdapter(
             database,
-            'UserLS',
-            (UserLS item) => <String, dynamic>{
+            'User',
+            (User item) => <String, dynamic>{
                   'id': item.id,
                   'username': item.username,
                   'password': item.password,
@@ -125,38 +125,51 @@ class _$UserDao extends UserDao {
 
   final QueryAdapter _queryAdapter;
 
-  static final _userLSMapper = (Map<String, dynamic> row) => UserLS();
+  static final _userMapper = (Map<String, dynamic> row) => User(
+      first_name: row['first_name'] as String,
+      last_name: row['last_name'] as String,
+      phone_number: row['phone_number'] as int,
+      address: row['address'] as String,
+      partner: row['partner'] as String,
+      sexe: row['sexe'] as String,
+      birth_date: row['birth_date'] as String,
+      job: row['job'] as String,
+      number_children_disabilities: row['number_children_disabilities'] as int,
+      number_children: row['number_children'] as int,
+      id: row['id'] as int,
+      username: row['username'] as String,
+      password: row['password'] as String,
+      email: row['email'] as String);
 
-  final InsertionAdapter<UserLS> _userLSInsertionAdapter;
+  final InsertionAdapter<User> _userInsertionAdapter;
 
   @override
-  Future<List<UserLS>> findAllUsers() async {
-    return _queryAdapter.queryList('SELECT * FROM UserLS',
-        mapper: _userLSMapper);
+  Future<List<User>> findAllUsers() async {
+    return _queryAdapter.queryList('SELECT * FROM User', mapper: _userMapper);
   }
 
   @override
-  Stream<UserLS> findUserById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM UserLS WHERE id = ?',
+  Stream<User> findUserById(int id) {
+    return _queryAdapter.queryStream('SELECT * FROM User WHERE id = ?',
         arguments: <dynamic>[id],
-        queryableName: 'UserLS',
+        queryableName: 'User',
         isView: false,
-        mapper: _userLSMapper);
+        mapper: _userMapper);
   }
 
   @override
   Future<void> delete(int id) async {
-    await _queryAdapter.queryNoReturn('DELETE FROM UserLS WHERE id = ?',
+    await _queryAdapter.queryNoReturn('DELETE FROM User WHERE id = ?',
         arguments: <dynamic>[id]);
   }
 
   @override
   Future<void> deleteAll() async {
-    await _queryAdapter.queryNoReturn('DELETE FROM UserLS');
+    await _queryAdapter.queryNoReturn('DELETE FROM User');
   }
 
   @override
-  Future<void> insertUser(UserLS userLS) async {
-    await _userLSInsertionAdapter.insert(userLS, OnConflictStrategy.abort);
+  Future<void> insertUser(User userLS) async {
+    await _userInsertionAdapter.insert(userLS, OnConflictStrategy.abort);
   }
 }

@@ -1,7 +1,11 @@
 
+import 'package:floor/floor.dart';
+
+@Entity(tableName: 'User')
 
 class User{
 
+ @PrimaryKey(autoGenerate: true)
  int id;
  String username;
  String password;
