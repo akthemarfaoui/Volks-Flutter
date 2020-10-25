@@ -6,90 +6,74 @@ import 'package:volks_demo/Utils/MyColors.dart';
 import 'package:volks_demo/Utils/UserAvatarCircle.dart';
 import 'package:volks_demo/Views/HomePage.dart';
 
-
 class PostDetailPage extends StatefulWidget {
-
   Post post;
   User user;
-  PostDetailPage(this.post,this.user);
+  PostDetailPage(this.post, this.user);
   @override
   State<StatefulWidget> createState() => PostDetailPageState();
 }
 
-
 class PostDetailPageState extends State<PostDetailPage> {
-
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          backgroundColor: MyColors.bkColor,
-          appBar: AppBar(
-            elevation: 0.0,
-            backgroundColor: MyColors.UpBarHome,
-
-          ),
-          body: PostSingleView(post: widget.post),
-
-          bottomNavigationBar: Theme(
-            data: Theme.of(context).copyWith(
-              // sets the background color of the `BottomNavigationBar`
-              canvasColor: Colors.white,
-              // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-              primaryColor: Theme.of(context).accentColor,
-              textTheme: Theme.of(context).textTheme.copyWith(
+      backgroundColor: MyColors.bkColor,
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: MyColors.UpBarHome,
+      ),
+      body: PostSingleView(post: widget.post),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          // sets the background color of the `BottomNavigationBar`
+          canvasColor: Colors.white,
+          // sets the active color of the `BottomNavigationBar` if `Brightness` is light
+          primaryColor: Theme.of(context).accentColor,
+          textTheme: Theme.of(context).textTheme.copyWith(
                 caption: TextStyle(color: Colors.grey[500]),
               ),
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.message),
+              title: Text("Messages"),
             ),
-            child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(
-                      Icons.message),
-                  title: Text("Messages"),
-                ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text("Home"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.edit_location),
+              title: Text("Location"),
+            ),
+          ],
+          onTap: (val) {
+            print(val);
 
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  title: Text("Home"),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.edit_location),
-                  title: Text("Location"),
-
-                ),
-
-              ],
-              onTap: (val){
-                print(val);
-
-                switch(val)
+            switch (val) {
+              case 1:
                 {
-                  case 1:
-                    {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(widget.user),
-                        ),
-                      );
-                      break;
-                    }
-
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(widget.user),
+                    ),
+                  );
+                  break;
                 }
-
-
-              },
-            ),
-          ),
-        );
+            }
+          },
+        ),
+      ),
+    );
   }
 }
 
@@ -128,7 +112,7 @@ class PostSingleViewState extends State<PostSingleView> {
 }
 
 class PostItemView extends StatefulWidget {
-   PostItemView({
+  PostItemView({
     Key key,
     this.item,
   }) : super(key: key);
@@ -171,7 +155,7 @@ class PostItemViewState extends State<PostItemView>
         color: MyColors.PostColor,
         elevation: 5.0,
         shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
         child: InkWell(
           child: Padding(
             padding: const EdgeInsets.only(
@@ -183,21 +167,21 @@ class PostItemViewState extends State<PostItemView>
                   child: Text(
                     widget.item.username,
                     style: TextStyle(
-                        fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                        fontSize: 20.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-
-
                     Expanded(
                         flex: 5,
-                        child:Container(
-                          height: MediaQuery.of(context).size.height *0.6,
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.6,
                           padding: EdgeInsets.only(top: 10),
                           child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,//.horizontal
+                            scrollDirection: Axis.vertical, //.horizontal
                             child: Text(
                               widget.item.description,
                               maxLines: null,
@@ -206,8 +190,7 @@ class PostItemViewState extends State<PostItemView>
                                   fontSize: 20.0, color: Colors.white70),
                             ),
                           ),
-                        )
-                    ),
+                        )),
                   ],
                 ),
                 SizedBox(height: 10.0),
@@ -244,20 +227,14 @@ class PostItemViewState extends State<PostItemView>
   }
 }
 
-
-double calculateHeight(String content)
-{
-
+double calculateHeight(String content) {
   print(content.length);
 
-  if(content.length>0 && content.length<=100)
+  if (content.length > 0 && content.length <= 100)
     return 50;
-  else if(content.length>100 && content.length<200)
+  else if (content.length > 100 && content.length < 200)
     return 160;
-  else{
+  else {
     return 200;
   }
-
 }
-
-

@@ -4,7 +4,7 @@ import "package:http/http.dart" as http;
 import 'package:intl/intl.dart';
 
 const String PORT = "3003";
-const String DOMAIN = "192.168.1.22";
+const String DOMAIN = "192.168.1.7";
 const String URL = "http://$DOMAIN:$PORT";
 
 String getServerURL(String route, [dynamic data]) {

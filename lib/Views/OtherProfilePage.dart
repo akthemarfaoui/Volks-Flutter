@@ -188,6 +188,7 @@ class OtherProfilePageState extends State<OtherProfilePage> {
                                   children: <Widget>[
                                     new Flexible(
                                       child: new TextField(
+                                        readOnly: true,
                                         decoration: const InputDecoration(
                                           hintText: " First Name",
                                         ),
@@ -225,6 +226,7 @@ class OtherProfilePageState extends State<OtherProfilePage> {
                                   children: <Widget>[
                                     new Flexible(
                                       child: new TextField(
+                                        readOnly: true,
                                         decoration: const InputDecoration(
                                             hintText: " Last Name"),
                                         controller: LastNameController,
@@ -261,6 +263,7 @@ class OtherProfilePageState extends State<OtherProfilePage> {
                                   children: <Widget>[
                                     new Flexible(
                                       child: new TextField(
+                                        readOnly: true,
                                         decoration: const InputDecoration(
                                             hintText: "Phone Number"),
                                         controller: PhoneNumberController,
@@ -297,6 +300,7 @@ class OtherProfilePageState extends State<OtherProfilePage> {
                                   children: <Widget>[
                                     new Flexible(
                                       child: new TextField(
+                                        readOnly: true,
                                         decoration: const InputDecoration(
                                             hintText: " Address"),
                                         controller: AddressController,
@@ -346,6 +350,7 @@ class OtherProfilePageState extends State<OtherProfilePage> {
                                       child: Padding(
                                         padding: EdgeInsets.only(right: 10.0),
                                         child: new TextField(
+                                          readOnly: true,
                                           decoration: const InputDecoration(
                                               hintText: " Children num"),
                                           controller: ChildNumberController,
@@ -355,6 +360,7 @@ class OtherProfilePageState extends State<OtherProfilePage> {
                                     ),
                                     Flexible(
                                       child: new TextField(
+                                        readOnly: true,
                                         decoration: const InputDecoration(
                                             hintText: "D.Children num"),
                                         controller: DChildNumberController,

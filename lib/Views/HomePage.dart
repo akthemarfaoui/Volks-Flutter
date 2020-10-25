@@ -88,14 +88,29 @@ class HomePageState extends State<HomePage> implements IHomeView {
               padding: EdgeInsets.zero,
               children: <Widget>[
                 DrawerHeader(
-                  child: Text('Username:   => ' + widget.user.username),
-                  decoration: BoxDecoration(
-                    color: MyColors.UpBarHome,
+                  decoration: BoxDecoration(color: MyColors.UpBarHome),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(
+                          Icons.account_circle,
+                          size: 80,
+                          color: MyColors.PostColor,
+                        ),
+                        subtitle: Text(
+                          widget.user.username,
+                          style: TextStyle(
+                              fontSize: 25.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                ListTile(
-                  title: Text('Disconnect'),
-                  onTap: () {
+                MaterialButton(
+                  onPressed: () {
                     widget.homePresenter.doLogout();
 
                     Navigator.push(
@@ -105,6 +120,8 @@ class HomePageState extends State<HomePage> implements IHomeView {
                       ),
                     );
                   },
+                  child: Text("Disconnect"),
+                  color: Colors.pink,
                 ),
               ],
             ),
