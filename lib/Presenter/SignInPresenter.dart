@@ -1,11 +1,7 @@
-import 'package:volks_demo/Model/Entity/User.dart';
-import 'package:volks_demo/Model/FloorLocalStorage/Database/AppDatabase.dart';
-import 'package:volks_demo/Model/Repository/PostRepository.dart';
 import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/Repository/UserRepository.dart';
 import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
 import 'package:volks_demo/Views/SignInPage.dart';
-import 'package:volks_demo/main.dart';
 
 class IPresenter {
   void doTrySignIn(bool RemeberMe,String TypedUsername, String TypedPassword) {}
@@ -32,9 +28,6 @@ class SignInPresenter implements IPresenter {
   @override
   void doTrySignIn(bool RemeberMe,String TypedUsername, String TypedPassword) {
 
-    PostRepository ps = PostRepository();
-    ps.fetchPosts("/posts/getAll/").then((value) => print(value));
-
     if(TypedUsername!="" && TypedPassword !="")
       {
         userRepository.getUser("/users/get/", [TypedUsername]).then((value) => {
@@ -57,15 +50,16 @@ class SignInPresenter implements IPresenter {
                       userLSRepository.insertUser(value),
                     },
 
-                  this.signInViewModel.AccessGranted = true,
-                  this.signInViewModel.ConnectedUser = value,
-                  this.signInViewModel.Message = "",
-                  this.signInViewModel.ErrorCode = 0,
-                  this.loginView.UpdateLoginMessage(this.signInViewModel),
+                      this.signInViewModel.AccessGranted = true,
+                      this.signInViewModel.ConnectedUser = value,
+                      this.signInViewModel.Message = "",
+                      this.signInViewModel.ErrorCode = 0,
+                      this.loginView.UpdateLoginMessage(this.signInViewModel),
 
                 }
               else
                 {
+
                   this.signInViewModel.AccessGranted = false,
                   this.signInViewModel.Message = "Wrong Password",
                   this.signInViewModel.ErrorCode = 2,
@@ -78,12 +72,11 @@ class SignInPresenter implements IPresenter {
         });
 
       }
-
-
   }
 
   @override
   void doCheckForRemeberMe() {
+
     UserLSRepository userLSRepository = new UserLSRepository();
     userLSRepository.findAll().then((value) => {
       if(value.length != 0)

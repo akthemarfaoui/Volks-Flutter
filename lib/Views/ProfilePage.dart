@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/Repository/UserRepository.dart';
 import 'package:volks_demo/Model/ViewModel/ProfileViewModel.dart';
 import 'package:volks_demo/Presenter/ProfilePresenter.dart';
+import 'package:volks_demo/Utils/HttpConfig.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
-import 'package:volks_demo/Views/HomePage.dart';
+import 'package:volks_demo/Views/HomePage/HomePage.dart';
 import 'package:volks_demo/Views/VolksPage.dart';
 
 class IPofileView {
@@ -25,6 +28,7 @@ class ProfilePageState extends State<ProfilePage>
     implements IPofileView {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
+  File _image = null;
 
   var FirstNameController = TextEditingController();
   var LastNameController = TextEditingController();
@@ -44,6 +48,7 @@ class ProfilePageState extends State<ProfilePage>
   @override
   void initState() {
     super.initState();
+    //getProfileImage("d");
     widget.profilePresenter.iPofileView = this;
     FirstNameController.text = widget.user.first_name ?? "";
     LastNameController.text = widget.user.last_name ?? "";
@@ -61,7 +66,7 @@ class ProfilePageState extends State<ProfilePage>
     });
 
     if (this.widget.didUpdated) {
-      print("ssss");
+      _status = true;
       AlertDialog alert = new AlertDialog(
         title: Text("User Updating.."),
         content: Text("User Updated Successfully"),
@@ -160,17 +165,25 @@ class ProfilePageState extends State<ProfilePage>
                                 children: <Widget>[
                                   Column(
                                     children: [
-                                      new Container(
-                                          width: 140.0,
-                                          height: 140.0,
-                                          decoration: new BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: new DecorationImage(
-                                              image: new ExactAssetImage(
-                                                  'assets/images/avatar_profile.png'),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          )),
+                                      Card(
+                                        child: new Container(
+                                            width: 140.0,
+                                            height: 140.0,
+                                            child: ClipOval(child:getProfileImage(widget.user.username) ) ,
+
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.transparent,
+                                              border: Border.all(width: 1.0, color: Colors.transparent)),
+                                        ),
+                                        color: Colors.black,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                              color: Colors.white70, width: 3),
+                                          borderRadius:
+                                              BorderRadius.circular(70),
+                                        ),
+                                      ),
                                       Container(
                                         margin: EdgeInsets.only(top: 30),
                                         child: Text(widget.user.username,
@@ -190,14 +203,24 @@ class ProfilePageState extends State<ProfilePage>
                                   child: new Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      new CircleAvatar(
-                                        backgroundColor: MyColors.PostColor,
-                                        radius: 25.0,
-                                        child: new Icon(
-                                          Icons.camera_alt,
-                                          color: Colors.white,
-                                        ),
-                                      )
+                                      !_status
+                                          ? GestureDetector(
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                    MyColors.PostColor,
+                                                radius: 25.0,
+                                                child: new Icon(
+                                                  Icons.camera_alt,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                AskIfGalleryOrCamera(context);
+
+                                                print("ssssqqqq");
+                                              },
+                                            )
+                                          : Container()
                                     ],
                                   )),
                             ]),
@@ -507,6 +530,7 @@ class ProfilePageState extends State<ProfilePage>
                   us.number_children_disabilities = 0;
 
                   widget.profilePresenter.doUpdateUser(us);
+                  widget.profilePresenter.doUploadImage(widget.user.username, _image);
                 },
                 shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(20.0)),
@@ -527,6 +551,9 @@ class ProfilePageState extends State<ProfilePage>
                     _status = true;
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
+                  UserRepository us = new UserRepository();
+
+
                 },
                 shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(20.0)),
@@ -556,5 +583,54 @@ class ProfilePageState extends State<ProfilePage>
         });
       },
     );
+  }
+
+  _imgFromCamera() async {
+
+    File image = await ImagePicker.pickImage(
+        source: ImageSource.camera, imageQuality: 50);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  _imgFromGallery() async {
+    File image = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  void AskIfGalleryOrCamera(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        _imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

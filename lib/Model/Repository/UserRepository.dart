@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Utils/HttpConfig.dart';
 import "package:http/http.dart" as http;
@@ -78,4 +79,38 @@ class UserRepository {
     }
     // return compute(parseUser,response.body);
   }
+
+
+  Future<http.Response> uploadProfileImage(String route,String username,File file) async
+  {
+    var url = getServerURL(route, []);
+
+    if(file != null)
+      {
+        String base64Image = base64Encode(file.readAsBytesSync());
+        return await http.post(url, body: {
+          "image": base64Image,
+          "name":username+".png"
+        });
+      }
+  }
+
+  Future<String> getProfileImage(String route,[dynamic args]) async
+  {
+
+    var url = getServerURL(route, args);
+    var response = await http.get(url);
+    File file = File("profileImage"+DateTime.now().millisecondsSinceEpoch.toString()+".png");
+/*
+    var ff = ReadBuffer(jsonDecode(response.body.toString()));
+    print(jsonDecode(response.body.toString())["data"]);
+    //await file.writeAsBytes(i);
+*/
+
+    print(response.body);
+    return file.path;
+
+  }
+
+
 }

@@ -4,7 +4,6 @@ import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/ViewModel/VolksViewModel.dart';
 import 'package:volks_demo/Presenter/VolksPresenter.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
-import 'package:volks_demo/Views/CustomWidget/UserCustomWidget.dart';
 
 class IVolksView {
   void UpdateVolksPage(VolksViewModel volksViewModel) {}

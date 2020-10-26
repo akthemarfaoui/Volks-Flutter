@@ -4,7 +4,6 @@ import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/ViewModel/AddPostViewModel.dart';
 import 'package:volks_demo/Presenter/AddPostPresenter.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
-import 'package:volks_demo/Views/HomePage.dart';
 
 import 'ProfilePage.dart';
 
@@ -40,18 +39,11 @@ class AddPostPageSatate extends State<AddPostPage> implements IAddPostView {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Posts"),
-          backgroundColor: MyColors.UpBarHome,
-          leading: IconButton(icon: Icon(Icons.home), onPressed: () {}),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.person),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(this.widget.user)));
-                })
+          centerTitle: true,
+          title: Text('Posts'),
+          leading: Icon(Icons.edit),
+          actions: <Widget>[
+
           ],
         ),
         body: Form(

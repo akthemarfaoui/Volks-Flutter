@@ -1,7 +1,8 @@
+import 'package:volks_demo/Model/Repository/CommentRepository.dart';
 import 'package:volks_demo/Model/Repository/PostRepository.dart';
 import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/ViewModel/HomeViewModel.dart';
-import 'package:volks_demo/Views/HomePage.dart';
+import 'package:volks_demo/Views/HomePage/Tabs/PostListTab.dart';
 
 class IHomePresenter
 {
@@ -9,6 +10,11 @@ class IHomePresenter
   void doGetPosts()
   {
 
+
+  }
+
+  void doGetNbComment(int idPost)
+  {
 
   }
   void doLogout() {
@@ -23,7 +29,9 @@ class HomePresenter implements IHomePresenter{
 
 HomeViewModel homeViewModel;
 IHomeView iHomeView;
+IPostItemView iPostItemView;
 PostRepository postRepository;
+CommentRepository commentRepository;
 UserLSRepository userLSRepository;
 
 HomePresenter()
@@ -31,7 +39,21 @@ HomePresenter()
  homeViewModel=new HomeViewModel(true);
  postRepository = new PostRepository();
  userLSRepository = new UserLSRepository();
+ commentRepository = new CommentRepository();
 }
+
+@override
+void doGetNbComment(int idPost) {
+  commentRepository.getCountComments("/comments/getCountByPost/",[idPost]).then((value) {
+
+    homeViewModel.nbComments = value;
+    iPostItemView.UpdatePostItemView(homeViewModel);
+
+  });
+
+}
+
+
   @override
   void doGetPosts() {
 
@@ -41,11 +63,11 @@ HomePresenter()
 
       this.homeViewModel.listPost = value;
       this.homeViewModel.loading = false;
-      iHomeView.UpdateSignUpPage(this.homeViewModel);
+      iHomeView.UpdateHomePage(this.homeViewModel);
 
     });
 
-  iHomeView.UpdateSignUpPage(this.homeViewModel);
+  iHomeView.UpdateHomePage(this.homeViewModel);
 
   }
 
@@ -55,4 +77,6 @@ void doLogout() {
   userLSRepository.deleteAll();
 
 }
+
+
 }

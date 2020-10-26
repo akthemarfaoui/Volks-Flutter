@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:volks_demo/Model/Entity/Post.dart';
-import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Utils/HttpConfig.dart';
 import "package:http/http.dart" as http;
 

@@ -18,6 +18,7 @@ class User{
  String sexe;
  String birth_date;
  String job;
+ String image;
  int number_children_disabilities;
  int number_children;
 
@@ -32,6 +33,12 @@ class User{
   this.birth_date=BirthDate.toIso8601String();
 
  }
+
+ User.ImageCtor(String Image)
+ {
+   this.image=Image;
+ }
+
 
  Map toJson() => {
    'username': username,

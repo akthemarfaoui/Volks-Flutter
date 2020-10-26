@@ -5,31 +5,38 @@ import 'package:volks_demo/Model/ViewModel/HomeViewModel.dart';
 import 'package:volks_demo/Presenter/HomePresenter.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
 import 'package:volks_demo/Utils/UserAvatarCircle.dart';
-import 'package:volks_demo/Views/AddPostPage.dart';
-import 'package:volks_demo/Views/PostDetailPage.dart';
-import 'package:volks_demo/Views/ProfilePage.dart';
-import 'package:volks_demo/Views/SignInPage.dart';
-
+import 'package:volks_demo/Views/PostDetailPage/PostDetailPage.dart';
 
 
 class IHomeView
 {
 
- void UpdateSignUpPage(HomeViewModel homeViewModel)
+ void UpdateHomePage(HomeViewModel homeViewModel)
  {
 
  }
 
 
 }
+
+class IPostItemView
+{
+  void UpdatePostItemView(HomeViewModel homeViewModel)
+  {
+
+  }
+}
+
+
+
 User USER;
-class HomePage extends StatefulWidget {
+class PostListTab extends StatefulWidget {
 
   User user;
 
   final homePresenter= new HomePresenter();
 
-  HomePage(this.user){
+  PostListTab(this.user){
     USER = user;
   }
   @override
@@ -37,12 +44,12 @@ class HomePage extends StatefulWidget {
 }
 
 
-class HomePageState extends State<HomePage> implements IHomeView {
+class HomePageState extends State<PostListTab> implements IHomeView {
   List<Post> postsList = [];
   Future<List<Post>> fpostsList;
 
   @override
-  void UpdateSignUpPage(HomeViewModel homeViewModel) {
+  void UpdateHomePage(HomeViewModel homeViewModel) {
 
     setState(() {
 
@@ -66,7 +73,7 @@ Future<List<Post>> getData() async {
 
     this.widget.homePresenter.iHomeView = this;
 
-    this.widget.homePresenter.doGetPosts();
+   // this.widget.homePresenter.doGetPosts();
     getData().then((d) {
       setState(() {
         loading = false;
@@ -75,7 +82,7 @@ Future<List<Post>> getData() async {
   }
 
   @override
-  void didUpdateWidget(HomePage oldWidget) {
+  void didUpdateWidget(PostListTab oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     this.widget.homePresenter.iHomeView = this;
@@ -84,45 +91,9 @@ Future<List<Post>> getData() async {
   }
   @override
   Widget build(BuildContext context) {
-    return WillPopScope( child:Scaffold(
-      backgroundColor: MyColors.bkColor,
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: MyColors.UpBarHome,
-
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Username:   => ' + widget.user.username),
-              decoration: BoxDecoration(
-                color: MyColors.UpBarHome,
-              ),
-            ),
-
-            ListTile(
-              title: Text('Disconnect'),
-              onTap: () {
-
-                widget.homePresenter.doLogout();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SignInPage(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+    return WillPopScope(
+        child:Scaffold(
+backgroundColor: Theme.of(context).buttonColor,
       body: !loading
           ? RefreshIndicator(
         onRefresh: () async {
@@ -135,78 +106,7 @@ Future<List<Post>> getData() async {
         child: CircularProgressIndicator(
             valueColor: new AlwaysStoppedAnimation<Color>(MyColors.PostColor)),
       ),
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          // sets the background color of the `BottomNavigationBar`
-          canvasColor: Colors.white,
-          // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-          primaryColor: Theme.of(context).accentColor,
-          textTheme: Theme.of(context).textTheme.copyWith(
-            caption: TextStyle(color: Colors.grey[500]),
-          ),
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(
-                  Icons.message),
-              title: Text("Messages"),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.group),
-              title: Text("Volks"),
 
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add),
-              title: Text("Add"),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              title: Text("Notifications"),
-
-            ),
-            BottomNavigationBarItem(
-
-              icon: Icon(Icons.person),
-              title: Text("Profile"),
-
-            ),
-          ],
-          onTap: (val){
-
-            print(val);
-
-            switch(val)
-            {
-              case 2:
-               {
-                 Navigator.push(
-                   context,
-                   MaterialPageRoute(
-                     builder: (context) => AddPostPage(widget.user),
-                   ),
-                 );
-                 break;
-               }
-              case 4:
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfilePage(widget.user),
-                    ),
-                  );
-                  break;
-                }
-
-            }
-
-
-          },
-        ),
-      ),
     ) ,onWillPop:() async => false);
 
 
@@ -230,8 +130,17 @@ class PostListView extends StatefulWidget {
 
 class PostListViewState extends State<PostListView> {
 
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
+
+
     return ListView(
         children: widget.list.isNotEmpty
             ? widget.list.map((item) {
@@ -247,7 +156,7 @@ class PostListViewState extends State<PostListView> {
                 UserAvatar(
                   height: 50.0,
                   width: 50.0,
-                  company: item.username,
+                  username: item.username,
                 ),
               ],
             ),
@@ -259,14 +168,16 @@ class PostListViewState extends State<PostListView> {
 
 class PostItemView extends StatefulWidget {
 
+  final homePresenter = new  HomePresenter();
 
-  const PostItemView({
+   PostItemView({
+
     Key key,
     this.item,
   }) : super(key: key);
 
   final Post item;
-
+  int nbComments = 0;
   @override
   PostItemViewState createState() {
     return PostItemViewState();
@@ -274,14 +185,33 @@ class PostItemView extends StatefulWidget {
 }
 
 class PostItemViewState extends State<PostItemView>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin implements IPostItemView {
   Animation animation;
   AnimationController animationController;
+
+
+  @override
+  void UpdatePostItemView(HomeViewModel homeViewModel) {
+    setState(() {
+      this.widget.nbComments = homeViewModel.nbComments;
+    });
+
+  }
+
+
+@override
+  void didUpdateWidget(PostItemView oldWidget) {
+
+    super.didUpdateWidget(oldWidget);
+    widget.homePresenter.iPostItemView = this;
+
+}
 
   @override
   void initState() {
     super.initState();
-
+    widget.homePresenter.iPostItemView = this;
+    widget.homePresenter.doGetNbComment(widget.item.id);
     animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
 
@@ -292,6 +222,8 @@ class PostItemViewState extends State<PostItemView>
         .animate(curvedAnimation);
 
     animationController.forward();
+
+
   }
 
   @override
@@ -309,7 +241,7 @@ class PostItemViewState extends State<PostItemView>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PostDetailPage(widget.item,USER),
+                builder: (context) => PostDetailPage(widget.item,USER,widget.nbComments),
               ),
             );
           },
@@ -323,8 +255,35 @@ class PostItemViewState extends State<PostItemView>
                   child: Text(
                     widget.item.username,
                     style: TextStyle(
-                        fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.bold),
+                        fontSize: 22.0, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+
+                  children: [
+
+                    Text(
+                      "25/10/2020",
+                      style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w400),
+                    ),
+
+
+                    SizedBox(
+                      width: 5,
+                    ),
+
+                    Text(
+                      "Tunis, Tunisia",
+                      style: TextStyle(
+                          color: Colors.white,fontSize: 14, fontWeight: FontWeight.w400),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -338,37 +297,47 @@ class PostItemViewState extends State<PostItemView>
                           maxLines: 8,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontSize: 20.0, color: Colors.white70),
+
+                              fontSize: 20.0, color: Colors.white,fontStyle: FontStyle.italic),
                         ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 10.0),
+
+
+                SizedBox(
+                  height: 10.0,
+                ),
+
+                Divider(
+                  thickness: 0.7,
+                  color: Colors.black.withOpacity(1),
+                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Icon(
-                      Icons.date_range,
-                      color: Colors.white70,
-                    ),
-                    Text(
-                      widget.item.posted_in ?? "",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Expanded(
-                      child: Container(),
-                    ),
-                    /*Text(
-                      widget.item.position ?? "",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),*/
-                    Icon(
-                      Icons.location_city,
-                      color: Colors.white,
+                    Row(
+                      children: <Widget>[
+                        Text(widget.nbComments.toString(),style: TextStyle(fontSize: 18)),
+                        SizedBox(
+                          width: 3.0,
+                        ),
+                        Icon(Icons.comment),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        //Text('4k'),
+                        /*SizedBox(
+                          width: 3.0,
+                        ),
+                        Icon(Icons.favorite),*/
+                      ],
                     ),
                   ],
-                ),
+                )
+
               ],
             ),
           ),
@@ -376,6 +345,8 @@ class PostItemViewState extends State<PostItemView>
       ),
     );
   }
+
+
 }
 
 

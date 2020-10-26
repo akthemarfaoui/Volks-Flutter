@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import "package:http/http.dart" as http;
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 const String PORT = "3003";
@@ -38,5 +36,31 @@ DateTime getFormatedDate(DateTime dateTime)
   final String formatted = formatter.format(dateTime);
   return DateTime.parse(formatted);
 }
+
+
+FadeInImage getProfileImage(String username)
+{
+  var url = getServerURL("/uploads/profileimage/",[username]);
+  return FadeInImage.assetNetwork(
+
+    placeholder: 'assets/images/loading_default.gif',
+    image: url,
+    fit: BoxFit.cover,
+
+  );
+
+}
+
+
+NetworkImage  getPostProfileImage(String username)
+{
+  var url = getServerURL("/uploads/profileimage/",[username]);
+  return NetworkImage(url);
+
+}
+
+
+
+
 
 

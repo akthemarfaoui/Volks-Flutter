@@ -19,9 +19,7 @@ dependencies:
   dropdown_formfield: ^0.1.3
   flutter_datetime_formfield: ^0.1.2
   flutter_search_bar: ^2.1.0
-
-
-
+  image_picker: ^0.6.7+12
 
 
 
@@ -40,3 +38,18 @@ flutter:
 
   assets:
     - assets/images/
+
+  fonts:
+    - family: Barlow
+      fonts:
+        - asset: assets/fonts/Barlow-Regular.ttf
+        - asset: assets/fonts/Barlow-SemiBold.ttf
+          weight: 400
+        - asset: assets/fonts/Barlow-Bold.ttf
+          weight: 700
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand-Regular.ttf
+        - asset: assets/fonts/Quicksand-Medium.ttf
+        - asset: assets/fonts/Quicksand-SemiBold.ttf
+        - asset: assets/fonts/Quicksand-Bold.ttf

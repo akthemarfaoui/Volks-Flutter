@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
-import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
 import 'package:volks_demo/Presenter/SignInPresenter.dart';
-import 'package:volks_demo/Views/HomePage.dart';
+import 'package:volks_demo/Views/HomePage/HomePage.dart';
 import 'package:volks_demo/Views/SignUpPage.dart';
 
 class ILoginView {
@@ -174,9 +173,7 @@ class _LoginState extends State<Login> implements ILoginView {
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: 50,
                     margin: EdgeInsets.only(top: 32),
-                    padding:
-                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                    decoration: BoxDecoration(
+                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                       color: Colors.white,
                       boxShadow: [
@@ -220,31 +217,8 @@ class _LoginState extends State<Login> implements ILoginView {
                   Column(
 
                     children: [
-
-                     /* Row(
-
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Remember Me"),
-                          Checkbox(
-                            value: _rememberMe,
-                            onChanged: (value){
-
-                              setState(() {
-
-                                _rememberMe=value;
-
-                              });
-
-                            } ,
-
-                          ),
-
-                        ],
-                      ),*/
-
-
                       Row(
+
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           RaisedButton(
@@ -277,7 +251,28 @@ class _LoginState extends State<Login> implements ILoginView {
                                   MaterialPageRoute(
                                       builder: (context) => SignUpPage()));
                             },
-                          )
+                          ),
+                          Row(
+
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Remember Me"),
+                              Checkbox(
+                                value: _rememberMe,
+                                onChanged: (value){
+
+                                  setState(() {
+
+                                    _rememberMe=value;
+
+                                  });
+
+                                } ,
+
+                              ),
+
+                            ],
+                          ),
                         ],
                       ),
                     ],
