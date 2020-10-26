@@ -53,72 +53,76 @@ class AddPostPageSatate extends State<AddPostPage> implements IAddPostView {
             padding: EdgeInsets.only(top: 10),
             child: Column(
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.1,
-                  height: MediaQuery.of(context).size.width / 2,
-                  padding:
-                      EdgeInsets.only(top: 1, left: 2, right: 16, bottom: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(2.0)),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                      )
-                    ],
+                Card(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
-                  child: TextFormField(
-                    controller: DescriptionTextEditController,
-                    decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.grey,
-                        ),
-                        hintText: 'Write your post here'),
-                  ),
-                ),
-                Spacer(),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  height: MediaQuery.of(context).size.width / 10,
-                  child: RaisedButton(
-                    child: new Text("Add Post"),
-                    textColor: MyColors.bkColor,
-                    color: MyColors.PostColor,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10.0),
-                    ),
-                    onPressed: () {
-                      this.widget.postPresenter.doAddPost(
-                            this.widget.user.username,
-                            DescriptionTextEditController.text,
-                          );
-                      DescriptionTextEditController.text = "";
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.account_circle, size: 50),
+                        title: Text(widget.user.username),
+                        subtitle: Text('profile'),
+                      ),
+                      TextFormField(
+                        controller: DescriptionTextEditController,
+                        decoration: InputDecoration(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.grey,
+                            ),
+                            hintText: 'Write your post here'),
+                        minLines: 3,
+                        maxLines: 5,
+                      ),
+                      Row(children: [
+                        ButtonBar(
+                          children: <Widget>[
+                            FlatButton(
+                              child: const Text('Add Post',
+                                  style: TextStyle(color: Colors.pink)),
+                              onPressed: () {
+                                this.widget.postPresenter.doAddPost(
+                                      this.widget.user.username,
+                                      DescriptionTextEditController.text,
+                                    );
+                                DescriptionTextEditController.text = "";
 
-                      // set up the button
-                      Widget okButton = FlatButton(
-                        child: Text("OK"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      );
-                      // set up the AlertDialog
-                      AlertDialog alert = AlertDialog(
-                        title: Text("Done"),
-                        content: Text("Post Added Successfully"),
-                        actions: [
-                          okButton,
-                        ],
-                      );
-                      // show the dialog
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return alert;
-                        },
-                      );
-                    },
+                                // set up the button
+                                Widget okButton = FlatButton(
+                                  child: Text("OK"),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                                // set up the AlertDialog
+                                AlertDialog alert = AlertDialog(
+                                  title: Text("Done"),
+                                  content: Text("Post Added Successfully"),
+                                  actions: [
+                                    okButton,
+                                  ],
+                                );
+                                // show the dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return alert;
+                                  },
+                                );
+                              },
+                            ),
+                            /* FlatButton(
+                              child: const Text('Show Profile',
+                                  style: TextStyle(color: Colors.pink)),
+                              onPressed: () {},
+                            ), */
+                          ],
+                        ),
+                      ]),
+                    ],
                   ),
                 ),
               ],
