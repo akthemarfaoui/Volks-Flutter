@@ -7,6 +7,7 @@ class Followers {
   String username;
   String following;
   String followOn;
+  Followers.forAdding({this.username, this.following});
 
   Followers({this.id, this.username, this.following, this.followOn});
 

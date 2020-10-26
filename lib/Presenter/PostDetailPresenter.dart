@@ -1,4 +1,6 @@
+import 'package:volks_demo/Model/Entity/Activity.dart';
 import 'package:volks_demo/Model/Entity/Comment.dart';
+import 'package:volks_demo/Model/Repository/ActivityRepository.dart';
 import 'package:volks_demo/Model/Repository/CommentRepository.dart';
 import 'package:volks_demo/Model/ViewModel/PostDetailPageViewModel.dart';
 import 'package:volks_demo/Views/PostDetailPage/PostDetailPage.dart';
@@ -23,11 +25,13 @@ class PostDetailPresenter implements IPostDetailPresenter
   IPostDetailPage iPostDetailView;
   ICommentPageTab iCommentPageTab;
   CommentRepository commentRepository;
+  ActivityRepository activityRepository;
 
   PostDetailPresenter()
   {
     postDetailPageViewModel = PostDetailPageViewModel(true);
     commentRepository = CommentRepository();
+    activityRepository = new ActivityRepository();
   }
 
   @override
@@ -52,6 +56,13 @@ class PostDetailPresenter implements IPostDetailPresenter
 
     commentRepository.addComment("/comments/add/", comment).then((value) {
     this.postDetailPageViewModel.successfullyInserted = true;
+
+    Activity activity = new Activity();
+    activity.username = comment.username;
+    activity.actWith = comment.post.toString();
+    activity.type = "COMMENT";
+    activityRepository.addActivity("/activity/add/", activity);
+
     this.iPostDetailView.doUpdatePostDetailPage(this.postDetailPageViewModel);
 
     });

@@ -2,12 +2,18 @@ import 'package:volks_demo/Model/Repository/CommentRepository.dart';
 import 'package:volks_demo/Model/Repository/PostRepository.dart';
 import 'package:volks_demo/Model/Repository/RepositoryLocalStorage/UserLSRepository.dart';
 import 'package:volks_demo/Model/ViewModel/HomeViewModel.dart';
+import 'package:volks_demo/Views/HomePage/Tabs/FollowersPostListTab.dart';
 import 'package:volks_demo/Views/HomePage/Tabs/PostListTab.dart';
 
 class IHomePresenter
 {
 
   void doGetPosts()
+  {
+
+
+  }
+  void doGetFollowersPosts(String username)
   {
 
 
@@ -33,7 +39,8 @@ IPostItemView iPostItemView;
 PostRepository postRepository;
 CommentRepository commentRepository;
 UserLSRepository userLSRepository;
-
+IPostFollowersView iPostFollowersView;
+IPostFollowersItemView iPostFollowersItemView;
 HomePresenter()
 {
  homeViewModel=new HomeViewModel(true);
@@ -53,7 +60,16 @@ void doGetNbComment(int idPost) {
 
 }
 
+@override
+void doGetNbCommentFollowerPost(int idPost) {
+  commentRepository.getCountComments("/comments/getCountByPost/",[idPost]).then((value) {
 
+    homeViewModel.nbComments = value;
+    iPostFollowersItemView.UpdatePostItemView(homeViewModel);
+
+  });
+
+}
   @override
   void doGetPosts() {
 
@@ -68,6 +84,23 @@ void doGetNbComment(int idPost) {
     });
 
   iHomeView.UpdateHomePage(this.homeViewModel);
+
+  }
+
+  @override
+  void doGetFollowersPosts(String username) {
+
+  this.homeViewModel.loading = true;
+
+  this.homeViewModel.FuturelistPost=postRepository.fetchFollowersPosts("/posts/getFollowersPost/",[username]).then((value){
+
+      this.homeViewModel.listPost = value;
+      this.homeViewModel.loading = false;
+      iPostFollowersView.UpdateHomePage(this.homeViewModel);
+
+    });
+
+  iPostFollowersView.UpdateHomePage(this.homeViewModel);
 
   }
 

@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/Entity/followers.dart';
-import 'package:volks_demo/Model/ViewModel/FollowersViewModel.dart';
 import 'package:volks_demo/Model/ViewModel/VolksViewModel.dart';
-import 'package:volks_demo/Presenter/FollowersPresenter.dart';
 import 'package:volks_demo/Presenter/VolksPresenter.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
 import 'package:volks_demo/Views/CustomWidget/UserCustomWidget.dart';
+import 'package:volks_demo/Views/HomePage/HomePage.dart';
 import 'package:volks_demo/Views/OtherProfilePage.dart';
 import 'package:volks_demo/Views/ProfilePage.dart';
 
@@ -18,10 +17,9 @@ class IVolksView {
 class VolksPage extends StatefulWidget {
   User user;
   final volksPresenter = new VolksPresenter();
-  final followersPresenter = new FollowersPresenter();
   List<String> names = [];
   List<String> followersnames = [];
-  VolksPage();
+  VolksPage(this.user);
 
   @override
   _VolksPageHomeState createState() => new _VolksPageHomeState();
@@ -69,12 +67,6 @@ class _VolksPageHomeState extends State<VolksPage> implements IVolksView {
         .showSnackBar(new SnackBar(content: new Text('You wrote $value!'))));
   }
 
-  void showFollowers(String name) {
-    this.widget.followersPresenter.doGetFollowers(name);
-    for (var i = 0; i < followersList.length; i++) {
-      print(followersList[i].following);
-    }
-  }
 
   _VolksPageHomeState() {
     searchBar = new SearchBar(
@@ -110,18 +102,85 @@ class _VolksPageHomeState extends State<VolksPage> implements IVolksView {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            OtherProfilePage(usersList[index])));
+                            OtherProfilePage(user: usersList[index],connectedUser: widget.user,)));
               },
               child: UserCustomWidget(user.first_name, user.username)
 
-              /*ListTile(
+            /*ListTile(
                 title: Text(
                   usersList[index].username,
                 ),
               )*/
-              );
+          );
         },
       ),
+        bottomNavigationBar: Theme(
+          data: Theme.of(context).copyWith(
+            // sets the background color of the `BottomNavigationBar`
+            canvasColor: Colors.white,
+            // sets the active color of the `BottomNavigationBar` if `Brightness` is light
+            primaryColor: Theme.of(context).accentColor,
+            textTheme: Theme.of(context).textTheme.copyWith(
+              caption: TextStyle(color: Colors.grey[500]),
+            ),
+          ),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.message,color: MyColors.secondaryColor),
+                title: Text("Messages",style: TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+              ),
+
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home,color: MyColors.secondaryColor),
+                title: Text("Home",style: TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications,color: MyColors.secondaryColor),
+                title: Text("Notifications",style: TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+              ),
+
+            ],
+            onTap: (val) {
+
+              switch (val) {
+                case 0:
+                  {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VolksPage(this.widget.user),
+                      ),
+                    );
+                    break;
+                  }
+                case 1:
+                  {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(widget.user),
+                      ),
+                    );
+                    break;
+                  }
+                case 2:
+                  {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(widget.user),
+                      ),
+                    );
+                    break;
+                  }
+              }
+            },
+          ),
+        )
+
+
     );
   }
 }
@@ -169,8 +228,8 @@ class Search extends SearchDelegate {
     query.isEmpty
         ? suggestionList = recentlistU
         : suggestionList.addAll(listU.where(
-            (element) => element.contains(query),
-          ));
+          (element) => element.contains(query),
+    ));
     return ListView.builder(
         itemCount: suggestionList.length,
         itemBuilder: (context, index) {

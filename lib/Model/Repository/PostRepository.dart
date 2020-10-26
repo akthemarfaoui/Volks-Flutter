@@ -30,6 +30,22 @@ class PostRepository {
     // return compute(parseUser,response.body);
   }
 
+  Future<List<Post>> fetchFollowersPosts(String route,[dynamic args]) async {
+    var url = getServerURL(route,args);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+
+      return parsePost(response.body);
+
+    } else {
+      throw Exception("Thabet ya bhim => status code= " +
+          response.statusCode.toString() +
+          " URI = " +
+          response.request.url.toString());
+    }
+    // return compute(parseUser,response.body);
+  }
 
   Future<Post> getPost(String route, [dynamic args]) async {
     var url = getServerURL(route, args);

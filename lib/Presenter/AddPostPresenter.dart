@@ -1,4 +1,6 @@
+import 'package:volks_demo/Model/Entity/Activity.dart';
 import 'package:volks_demo/Model/Entity/Post.dart';
+import 'package:volks_demo/Model/Repository/ActivityRepository.dart';
 import 'package:volks_demo/Model/Repository/PostRepository.dart';
 import 'package:volks_demo/Model/ViewModel/AddPostViewModel.dart';
 import 'package:volks_demo/Views/AddPostPage.dart';
@@ -12,10 +14,12 @@ class AddPostPresenter implements IAddPostPresenter {
   IAddPostView iAddPostView;
 
   PostRepository postRepository;
+  ActivityRepository activityRepository;
 
   AddPostPresenter() {
     addPostViewModel = new AddPostViewModel("");
     postRepository = new PostRepository();
+    activityRepository = new ActivityRepository();
   }
 
   @override
@@ -34,7 +38,16 @@ class AddPostPresenter implements IAddPostPresenter {
 
       postRepository
           .addPost("/posts/add/", post)
-          .then((value) => print("id => " + value.toString()));
+          .then((value) {
+
+            Activity activity = new Activity();
+            activity.type = "POST";
+            activity.username = post.username;
+            activity.actWith = value.toString();
+            activityRepository.addActivity("/activity/add/", activity);
+
+          });
+
     }
   }
 }

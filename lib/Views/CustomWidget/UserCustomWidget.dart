@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:volks_demo/Utils/HttpConfig.dart';
 
 class UserCustomWidget extends StatelessWidget {
   String srcImage, Username;
@@ -16,7 +17,7 @@ class UserCustomWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            leading: Icon(Icons.account_circle, size: 50),
+            leading: Container(width:50 ,height:50 ,  child: ClipOval(child: getProfileImage(Username))),
             title: Text(Username),
             subtitle: Text('profile'),
           ),

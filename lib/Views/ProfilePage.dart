@@ -124,7 +124,7 @@ class ProfilePageState extends State<ProfilePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => VolksPage(),
+                    builder: (context) => VolksPage(this.widget.user),
                   ),
                 );
                 break;

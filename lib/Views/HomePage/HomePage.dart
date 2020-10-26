@@ -4,6 +4,8 @@ import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Presenter/HomePresenter.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
 import 'package:volks_demo/Views/AddPostPage.dart';
+import 'package:volks_demo/Views/HomePage/Tabs/ActivityListTab.dart';
+import 'package:volks_demo/Views/HomePage/Tabs/FollowersPostListTab.dart';
 import 'package:volks_demo/Views/HomePage/Tabs/PostListTab.dart';
 import 'package:volks_demo/Views/ProfilePage.dart';
 import 'package:volks_demo/Views/SignInPage.dart';
@@ -40,6 +42,7 @@ class HomePageState extends State<HomePage> {
             data: ThemeData(
               primaryColor: MyColors.primaryColor,
               appBarTheme: AppBarTheme(
+
                 color: Colors.white,
                 textTheme: TextTheme(
                   title: TextStyle(
@@ -48,6 +51,7 @@ class HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
                 iconTheme: IconThemeData(color: MyColors.secondaryColor),
                 actionsIconTheme: IconThemeData(
                   color: MyColors.secondaryColor,
@@ -65,10 +69,23 @@ class HomePageState extends State<HomePage> {
                     padding: EdgeInsets.zero,
                     children: <Widget>[
                       DrawerHeader(
-                        child: Text('Username:   => ' + widget.user.username),
-                        decoration: BoxDecoration(
-                          color: MyColors.UpBarHome,
-                        ),
+                  decoration: BoxDecoration(color: MyColors.UpBarHome),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      ListTile(
+                          leading: Icon(
+                            Icons.account_circle,
+                            size: 80,
+                            color: MyColors.PostColor,
+                          ),
+                          subtitle: Text(
+                            widget.user.username,
+                            style: TextStyle(
+                                fontSize: 25.0,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
                       ),
                       ListTile(
                         title: Text('Disconnect'),
@@ -85,10 +102,10 @@ class HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                ),
+                )])),
                 appBar: AppBar(
                   centerTitle: true,
-                  title: Text('Volks App', style:  TextStyle(color: MyColors.UpBarHome),),
+                  title: Text('Volks App', style:  TextStyle(color: MyColors.UpBarHome)),
                   actions: <Widget>[],
                   bottom: TabBar(
                     isScrollable: true,
@@ -118,16 +135,15 @@ class HomePageState extends State<HomePage> {
                 body: TabBarView(
                   children: <Widget>[
                     Container(
-
-
-                      child: PostListTab(widget.user),
-                        //child: PostSingleView(post: widget.post)
+                      child: PostListTab(widget.user)
                         ),
                     Container(
-                        //child: CommentPageTab(widget.post),
+
+                      child: FollowerPostListTab(widget.user),
+
                         ),
                     Container(
-                      //child: CommentPageTab(widget.post),
+                      child: ActivityListTab(user: widget.user)
                     ),
                   ],
                 ),
@@ -174,7 +190,7 @@ class HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => VolksPage(),
+                                builder: (context) => VolksPage(this.widget.user),
                               ),
                             );
                             break;
