@@ -1,3 +1,5 @@
+import 'package:volks_demo/Utils/HttpConfig.dart';
+
 class Post {
   int id;
   String username;
@@ -5,6 +7,8 @@ class Post {
   String description;
   String group_name;
   String position;
+  String coord_lat;
+  String coord_lng;
 
   Post({
     this.id,
@@ -13,12 +17,24 @@ class Post {
     this.description,
     this.group_name,
     this.position,
+    this.coord_lat,
+    this.coord_lng
   });
 
-  Post.AnotherCtor(String Username, String Description) {
+  Post.AddWithoutPosition(String Username, String Description) {
     this.username = Username;
-    // this.posted_in = PostedIn.toIso8601String();
+    this.posted_in =getFormatedDate(DateTime.now()).toString();
     this.description = Description;
+  }
+
+  Post.AddWithPosition(String Username,String Description,String coord_lat,String coord_lng,String position)
+  {
+    this.username = Username;
+    this.description = Description;
+    this.coord_lng = coord_lng;
+    this.coord_lat = coord_lat;
+    this.position = position;
+    this.posted_in =getFormatedDate(DateTime.now()).toString();
   }
 
   Map toJson() => {
@@ -27,6 +43,8 @@ class Post {
         'description': description,
         'group_name': group_name,
         'position': position,
+        'coord_lng': coord_lng,
+        'coord_lat': coord_lat,
       };
 
   factory Post.fromJson(Map<String, dynamic> json) {
@@ -37,6 +55,8 @@ class Post {
       description: json['description'] as dynamic,
       group_name: json['group_name'] as dynamic,
       position: json['position'] as dynamic,
+      coord_lng: json['coord_lng'] as dynamic,
+      coord_lat: json['coord_lat'] as dynamic,
     );
   }
 }

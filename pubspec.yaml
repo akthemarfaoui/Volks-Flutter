@@ -20,6 +20,14 @@ dependencies:
   flutter_datetime_formfield: ^0.1.2
   flutter_search_bar: ^2.1.0
   image_picker: ^0.6.7+12
+  flutter_map: any
+  geolocator: ^6.1.0
+  geocoding: ^1.0.5
+  argon_buttons_flutter: ^1.0.6
+  flutter_spinkit: "^4.1.2"
+
+
+
 
 
 

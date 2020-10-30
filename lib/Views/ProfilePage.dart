@@ -37,7 +37,8 @@ class ProfilePageState extends State<ProfilePage>
   var ChildNumberController = TextEditingController();
   var DChildNumberController = TextEditingController();
   GlobalKey keyForm = new GlobalKey();
-
+  bool findAdressLoading = false;
+  String myAdress="";
   @override
   void didUpdateWidget(ProfilePage oldWidget) {
     // TODO: implement didUpdateWidget
@@ -61,9 +62,15 @@ class ProfilePageState extends State<ProfilePage>
 
   @override
   void UpdateProfilePage(ProfileViewModel profileViewModel) {
+
     setState(() {
+      this.myAdress = profileViewModel.myAdress;
+      this.findAdressLoading = profileViewModel.findAdressLoading;
       this.widget.didUpdated = profileViewModel.didUpdated;
     });
+    if(this.myAdress!="")
+    this.AddressController.text = "";
+    this.AddressController.text = this.myAdress;
 
     if (this.widget.didUpdated) {
       _status = true;
@@ -169,7 +176,9 @@ class ProfilePageState extends State<ProfilePage>
                                         child: new Container(
                                             width: 140.0,
                                             height: 140.0,
-                                            child: ClipOval(child:getProfileImage(widget.user.username) ) ,
+                                            child:_image ==null ? ClipOval(child:getProfileImage(widget.user.username)) : Image.file(_image, width: 100,
+                                              height: 100,
+                                              fit: BoxFit.fitHeight,) ,
 
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
@@ -399,6 +408,7 @@ class ProfilePageState extends State<ProfilePage>
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold),
                                         ),
+
                                       ],
                                     ),
                                   ],
@@ -417,6 +427,17 @@ class ProfilePageState extends State<ProfilePage>
                                         controller: AddressController,
                                       ),
                                     ),
+
+                                   !_status ? (findAdressLoading ?Center(
+                                     child: CircularProgressIndicator(
+                                         valueColor: new AlwaysStoppedAnimation<Color>(MyColors.PostColor)),
+                                   ): FlatButton.icon(onPressed:(){
+
+                                     this.widget.profilePresenter.doFindMyAdress();
+
+                                    } , textColor: Colors.black, label: Text("Find"),icon: Icon(Icons.location_on,color: MyColors.PostColor))):Container()
+
+
                                   ],
                                 )),
                             Padding(
@@ -530,6 +551,7 @@ class ProfilePageState extends State<ProfilePage>
                   us.number_children_disabilities = 0;
 
                   widget.profilePresenter.doUpdateUser(us);
+                  if(_image!=null)
                   widget.profilePresenter.doUploadImage(widget.user.username, _image);
                 },
                 shape: new RoundedRectangleBorder(

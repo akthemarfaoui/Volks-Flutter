@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:volks_demo/API/FlutterMap.dart';
 import 'package:volks_demo/Model/Entity/Comment.dart';
 import 'package:volks_demo/Model/Entity/Post.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
@@ -35,6 +37,8 @@ class PostDetailPage extends StatefulWidget {
 class PostDetailPageState extends State<PostDetailPage> implements IPostDetailPage  {
 
   bool closeModal = false;
+  double lat = 0;
+  double lng = 0;
   @override
   void doUpdatePostDetailPage(PostDetailPageViewModel postDetailPageViewModel) {
 
@@ -56,6 +60,11 @@ class PostDetailPageState extends State<PostDetailPage> implements IPostDetailPa
   void initState() {
     super.initState();
     this.widget.postDetailPresenter.iPostDetailView = this;
+    if(widget.post.coord_lng!=null && widget.post.coord_lat!=null)
+      {
+        lat=double.tryParse(widget.post.coord_lat);
+        lng=double.tryParse(widget.post.coord_lng);
+      }
   }
 
   @override
@@ -149,8 +158,10 @@ class PostDetailPageState extends State<PostDetailPage> implements IPostDetailPa
                     title: Text("Home"),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.edit_location,color: MyColors.secondaryColor),
+
+                    icon: (lng == null && lat == null) || (lat == 0 && lng ==0) ? Icon(Icons.edit_location,color: Colors.black12):Icon(Icons.edit_location,color:MyColors.secondaryColor),
                     title: Text("Location"),
+
                   ),
                 ],
                 onTap: (val) {
@@ -172,6 +183,22 @@ class PostDetailPageState extends State<PostDetailPage> implements IPostDetailPa
                             builder: (context) => HomePage(widget.user),
                           ),
                         );
+                        break;
+                      }
+                    case 2:
+                      {
+                        if((lng != null && lat != null) && (lat != 0 && lng !=0))
+                          {
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MapView.setLatLong(lat,lng),
+                              ),
+                            );
+
+
+                          }
                         break;
                       }
                   }

@@ -3,6 +3,7 @@ import 'package:volks_demo/Model/Entity/Post.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/ViewModel/HomeViewModel.dart';
 import 'package:volks_demo/Presenter/HomePresenter.dart';
+import 'package:volks_demo/Utils/HttpConfig.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
 import 'package:volks_demo/Utils/UserAvatarCircle.dart';
 import 'package:volks_demo/Views/PostDetailPage/PostDetailPage.dart';
@@ -211,6 +212,7 @@ class PostItemViewState extends State<PostItemView>
   void initState() {
     super.initState();
     widget.homePresenter.iPostItemView = this;
+
     widget.homePresenter.doGetNbComment(widget.item.id);
     animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
@@ -251,40 +253,88 @@ class PostItemViewState extends State<PostItemView>
             child: Column(
               children: <Widget>[
                 Container(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    widget.item.username,
-                    style: TextStyle(
-                        fontSize: 22.0, color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
+
+                    alignment: Alignment.topLeft,
+                  child: Column(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+
+                          Text(
+                            widget.item.username,
+                            style: TextStyle(
+                                fontSize: 22.0, color: Colors.black87, fontWeight: FontWeight.bold),
+                          ),
+
+                          SizedBox(
+                            height: 10,
+
+                          ),
+
+                          Row(
+
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 5,
+
+                              ),
+                              SizedBox(width: 5,),
+                              Flexible(
+                                child: Container(
+                                  child:Text(
+                                    getFormatedDateFromSQl(widget.item.posted_in),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+
+                                        fontSize: 18.0, color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+
+                          SizedBox(
+                            height: 5,
+                          ),
+
+                          widget.item.position != null && widget.item.position!="" ?  Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 5,
+
+                              ),
+                              Icon(Icons.location_on,size: 14,color: Colors.white70,),
+                              SizedBox(width: 5,),
+                              Flexible(
+                                child: Container(
+                                  child:Text(
+                                    widget.item.position ,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+
+                                        fontSize: 14.0, color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ):SizedBox(
+
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  )
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
 
-                  children: [
-
-                    Text(
-                      "25/10/2020",
-                      style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w400),
-                    ),
-
-
-                    SizedBox(
-                      width: 5,
-                    ),
-
-                    Text(
-                      "Tunis, Tunisia",
-                      style: TextStyle(
-                          color: Colors.white,fontSize: 14, fontWeight: FontWeight.w400),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
