@@ -167,14 +167,29 @@ class ProfilePageState extends State<ProfilePage>
                                     children: [
                                       Card(
                                         child: new Container(
-                                            width: 140.0,
-                                            height: 140.0,
-                                            child: ClipOval(child:getProfileImage(widget.user.username) ) ,
-
+                                          width: 140.0,
+                                          height: 140.0,
+                                          child: _image == null
+                                              ? ClipOval(
+                                                  child: getProfileImage(
+                                                      widget.user.username))
+                                              : ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          65.0),
+                                                  child: Image.file(
+                                                    _image,
+                                                    height: 50,
+                                                    width: 50,
+                                                    fit: BoxFit.fill,
+                                                  ),
+                                                ),
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Colors.transparent,
-                                              border: Border.all(width: 1.0, color: Colors.transparent)),
+                                              border: Border.all(
+                                                  width: 1.0,
+                                                  color: Colors.transparent)),
                                         ),
                                         color: Colors.black,
                                         shape: RoundedRectangleBorder(
@@ -530,7 +545,8 @@ class ProfilePageState extends State<ProfilePage>
                   us.number_children_disabilities = 0;
 
                   widget.profilePresenter.doUpdateUser(us);
-                  widget.profilePresenter.doUploadImage(widget.user.username, _image);
+                  widget.profilePresenter
+                      .doUploadImage(widget.user.username, _image);
                 },
                 shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(20.0)),
@@ -552,8 +568,6 @@ class ProfilePageState extends State<ProfilePage>
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                   UserRepository us = new UserRepository();
-
-
                 },
                 shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(20.0)),
@@ -586,7 +600,6 @@ class ProfilePageState extends State<ProfilePage>
   }
 
   _imgFromCamera() async {
-
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
 

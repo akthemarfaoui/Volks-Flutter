@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Presenter/HomePresenter.dart';
+import 'package:volks_demo/Utils/HttpConfig.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
 import 'package:volks_demo/Views/AddPostPage.dart';
 import 'package:volks_demo/Views/HomePage/Tabs/ActivityListTab.dart';
@@ -42,7 +43,6 @@ class HomePageState extends State<HomePage> {
             data: ThemeData(
               primaryColor: MyColors.primaryColor,
               appBarTheme: AppBarTheme(
-
                 color: Colors.white,
                 textTheme: TextTheme(
                   title: TextStyle(
@@ -51,7 +51,6 @@ class HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 iconTheme: IconThemeData(color: MyColors.secondaryColor),
                 actionsIconTheme: IconThemeData(
                   color: MyColors.secondaryColor,
@@ -61,51 +60,54 @@ class HomePageState extends State<HomePage> {
             child: Scaffold(
                 backgroundColor: Theme.of(context).buttonColor,
                 drawer: Drawer(
-                  // Add a ListView to the drawer. This ensures the user can scroll
-                  // through the options in the drawer if there isn't enough vertical
-                  // space to fit everything.
-                  child: ListView(
-                    // Important: Remove any padding from the ListView.
-                    padding: EdgeInsets.zero,
-                    children: <Widget>[
+                    // Add a ListView to the drawer. This ensures the user can scroll
+                    // through the options in the drawer if there isn't enough vertical
+                    // space to fit everything.
+                    child: ListView(
+                        // Important: Remove any padding from the ListView.
+                        padding: EdgeInsets.zero,
+                        children: <Widget>[
                       DrawerHeader(
-                  decoration: BoxDecoration(color: MyColors.UpBarHome),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      ListTile(
-                          leading: Icon(
-                            Icons.account_circle,
-                            size: 80,
-                            color: MyColors.PostColor,
-                          ),
-                          subtitle: Text(
-                            widget.user.username,
-                            style: TextStyle(
-                                fontSize: 25.0,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                      ),
-                      ListTile(
-                        title: Text('Disconnect'),
-                        onTap: () {
-                          widget.homePresenter.doLogout();
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignInPage(),
+                        decoration: BoxDecoration(color: MyColors.UpBarHome),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            ListTile(
+                              leading: Container(
+                                  width: 50,
+                                  height: 50,
+                                  child: ClipOval(
+                                      child: getProfileImage(
+                                          widget.user.username))),
+                              subtitle: Text(
+                                widget.user.username,
+                                style: TextStyle(
+                                    fontSize: 25.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                )])),
+                            ListTile(
+                              title: Text('Disconnect'),
+                              onTap: () {
+                                widget.homePresenter.doLogout();
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SignInPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                    ])),
                 appBar: AppBar(
                   centerTitle: true,
-                  title: Text('Volks App', style:  TextStyle(color: MyColors.UpBarHome)),
+                  title: Text('Volks App',
+                      style: TextStyle(color: MyColors.UpBarHome)),
                   actions: <Widget>[],
                   bottom: TabBar(
                     isScrollable: true,
@@ -122,7 +124,8 @@ class HomePageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 8.0, bottom: 8.0, left: 8.0),
-                        child: Text("Follower's post", style: TextStyle(fontSize: 18)),
+                        child: Text("Follower's post",
+                            style: TextStyle(fontSize: 18)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
@@ -134,17 +137,11 @@ class HomePageState extends State<HomePage> {
                 ),
                 body: TabBarView(
                   children: <Widget>[
+                    Container(child: PostListTab(widget.user)),
                     Container(
-                      child: PostListTab(widget.user)
-                        ),
-                    Container(
-
                       child: FollowerPostListTab(widget.user),
-
-                        ),
-                    Container(
-                      child: ActivityListTab(user: widget.user)
                     ),
+                    Container(child: ActivityListTab(user: widget.user)),
                   ],
                 ),
                 bottomNavigationBar: Theme(
@@ -161,24 +158,37 @@ class HomePageState extends State<HomePage> {
                     type: BottomNavigationBarType.fixed,
                     items: <BottomNavigationBarItem>[
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.message,color: MyColors.secondaryColor),
-                        title: Text("Messages",style: TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+                        icon:
+                            Icon(Icons.message, color: MyColors.secondaryColor),
+                        title: Text("Messages",
+                            style: TextStyle(
+                                fontSize: 14, color: MyColors.secondaryColor)),
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.group,color: MyColors.secondaryColor),
-                        title: Text("Volks",style: TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+                        icon: Icon(Icons.group, color: MyColors.secondaryColor),
+                        title: Text("Volks",
+                            style: TextStyle(
+                                fontSize: 14, color: MyColors.secondaryColor)),
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.add,color: MyColors.secondaryColor),
-                        title: Text("Add",style: TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+                        icon: Icon(Icons.add, color: MyColors.secondaryColor),
+                        title: Text("Add",
+                            style: TextStyle(
+                                fontSize: 14, color: MyColors.secondaryColor)),
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.notifications,color: MyColors.secondaryColor),
-                        title: Text("Notifications",style: TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+                        icon: Icon(Icons.notifications,
+                            color: MyColors.secondaryColor),
+                        title: Text("Notifications",
+                            style: TextStyle(
+                                fontSize: 14, color: MyColors.secondaryColor)),
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.person,color: MyColors.secondaryColor),
-                        title: Text("Profile",style:TextStyle(fontSize:14 ,color: MyColors.secondaryColor )),
+                        icon:
+                            Icon(Icons.person, color: MyColors.secondaryColor),
+                        title: Text("Profile",
+                            style: TextStyle(
+                                fontSize: 14, color: MyColors.secondaryColor)),
                       ),
                     ],
                     onTap: (val) {
@@ -190,7 +200,8 @@ class HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => VolksPage(this.widget.user),
+                                builder: (context) =>
+                                    VolksPage(this.widget.user),
                               ),
                             );
                             break;
@@ -223,5 +234,3 @@ class HomePageState extends State<HomePage> {
     );
   }
 }
-
-
