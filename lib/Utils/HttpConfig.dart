@@ -30,6 +30,14 @@ String getServerURL(String route,[dynamic data])
 }
 
 
+String getFormatedDateFromSQl(String date)
+{
+  final dateFromString = DateTime.parse(date);
+  final DateFormat formatter = DateFormat('E, MMM, y');
+  final String formatted = formatter.format(dateFromString);
+  return formatted;
+}
+
 DateTime getFormatedDate(DateTime dateTime)
 {
   final DateFormat formatter = DateFormat('yyyy-MM-dd');

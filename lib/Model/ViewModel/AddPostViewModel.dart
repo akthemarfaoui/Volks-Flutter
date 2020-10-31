@@ -2,8 +2,9 @@ import 'package:volks_demo/Model/Entity/User.dart';
 
 class AddPostViewModel {
 
-  String ErrorMessage;
+  bool didAddedSuccessfully;
+  bool loading;
 
-  AddPostViewModel(this.ErrorMessage);
+  AddPostViewModel(this.didAddedSuccessfully,this.loading);
 
 }

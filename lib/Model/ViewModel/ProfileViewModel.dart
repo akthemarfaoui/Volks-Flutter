@@ -2,6 +2,8 @@
 class ProfileViewModel
 {
 bool didUpdated;
-ProfileViewModel(this.didUpdated);
+String myAdress;
+bool findAdressLoading;
+ProfileViewModel(this.didUpdated,this.myAdress,this.findAdressLoading);
 
 }

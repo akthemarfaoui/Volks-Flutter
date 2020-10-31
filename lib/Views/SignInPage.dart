@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:volks_demo/API/FlutterMap.dart';
+import 'package:volks_demo/API/GeoCoding.dart';
 import 'package:volks_demo/Model/Entity/User.dart';
 import 'package:volks_demo/Model/ViewModel/SignInViewModel.dart';
 import 'package:volks_demo/Presenter/SignInPresenter.dart';
@@ -48,10 +50,20 @@ class _LoginState extends State<Login> implements ILoginView {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this.widget.presenter.loginView = this;
     this.widget.presenter.doCheckForRemeberMe();
+
+    GeoCoding g = GeoCoding();
+   /* g.reverseGeocode(36.8617661721038, 10.263805030419455).then((value){
+
+      print(value.first);
+
+    });
+*/
+    String a = "";
+
+
   }
 
 
@@ -249,7 +261,7 @@ class _LoginState extends State<Login> implements ILoginView {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SignUpPage()));
+                                      builder: (context) => SignUp()));
                             },
                           ),
                           Row(
