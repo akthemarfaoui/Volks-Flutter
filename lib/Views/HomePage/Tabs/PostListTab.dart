@@ -87,9 +87,8 @@ Future<List<Post>> getData() async {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     this.widget.homePresenter.iHomeView = this;
-    //this.widget.homePresenter.doGetPosts();
-
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -140,7 +139,6 @@ class PostListViewState extends State<PostListView> {
   }
   @override
   Widget build(BuildContext context) {
-
 
     return ListView(
         children: widget.list.isNotEmpty
@@ -319,6 +317,7 @@ class PostItemViewState extends State<PostItemView>
                                     style: TextStyle(
 
                                         fontSize: 14.0, color: Colors.white),
+
                                   ),
                                 ),
                               ),
@@ -347,7 +346,6 @@ class PostItemViewState extends State<PostItemView>
                           maxLines: 8,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-
                               fontSize: 20.0, color: Colors.white,fontStyle: FontStyle.italic),
                         ),
                       ),

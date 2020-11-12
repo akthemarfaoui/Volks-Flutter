@@ -7,6 +7,7 @@ import 'package:volks_demo/Views/AddPostPage.dart';
 import 'package:volks_demo/Views/HomePage/Tabs/ActivityListTab.dart';
 import 'package:volks_demo/Views/HomePage/Tabs/FollowersPostListTab.dart';
 import 'package:volks_demo/Views/HomePage/Tabs/PostListTab.dart';
+import 'package:volks_demo/Views/MessagingPage.dart';
 import 'package:volks_demo/Views/ProfilePage.dart';
 import 'package:volks_demo/Views/SignInPage.dart';
 import 'package:volks_demo/Views/VolksPage.dart';
@@ -61,11 +62,7 @@ class HomePageState extends State<HomePage> {
             child: Scaffold(
                 backgroundColor: Theme.of(context).buttonColor,
                 drawer: Drawer(
-                  // Add a ListView to the drawer. This ensures the user can scroll
-                  // through the options in the drawer if there isn't enough vertical
-                  // space to fit everything.
                   child: ListView(
-                    // Important: Remove any padding from the ListView.
                     padding: EdgeInsets.zero,
                     children: <Widget>[
                       DrawerHeader(
@@ -149,9 +146,7 @@ class HomePageState extends State<HomePage> {
                 ),
                 bottomNavigationBar: Theme(
                   data: Theme.of(context).copyWith(
-                    // sets the background color of the `BottomNavigationBar`
                     canvasColor: Colors.white,
-                    // sets the active color of the `BottomNavigationBar` if `Brightness` is light
                     primaryColor: Theme.of(context).accentColor,
                     textTheme: Theme.of(context).textTheme.copyWith(
                           caption: TextStyle(color: Colors.grey[500]),
@@ -185,6 +180,17 @@ class HomePageState extends State<HomePage> {
                       print(val);
 
                       switch (val) {
+
+                        case 0:
+                          {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MessagingPage(connectedUser: this.widget.user),
+                              ),
+                            );
+                            break;
+                          }
                         case 1:
                           {
                             Navigator.push(

@@ -68,6 +68,7 @@ class ProfilePageState extends State<ProfilePage>
       this.findAdressLoading = profileViewModel.findAdressLoading;
       this.widget.didUpdated = profileViewModel.didUpdated;
     });
+    
     if(this.myAdress!="")
     this.AddressController.text = "";
     this.AddressController.text = this.myAdress;

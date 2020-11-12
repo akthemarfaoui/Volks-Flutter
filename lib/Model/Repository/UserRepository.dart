@@ -5,6 +5,7 @@ import 'package:volks_demo/Utils/HttpConfig.dart';
 import "package:http/http.dart" as http;
 
 class UserRepository {
+
   List<User> parseUser(String responseBody) {
     final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<User>((json) => User.fromJson(json)).toList();

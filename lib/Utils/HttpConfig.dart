@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 const String PORT = "3003";
-const String DOMAIN = "192.168.1.7";
+const String SOCKET_PORT = "3000";
+const String DOMAIN = "192.168.1.3";
 const String URL = "http://$DOMAIN:$PORT";
+const String WEB_SOCKET_URL = "ws://$DOMAIN:$SOCKET_PORT";
+
+
 
 String getServerURL(String route,[dynamic data])
 {
@@ -38,6 +42,14 @@ String getFormatedDateFromSQl(String date)
   return formatted;
 }
 
+
+String getFormatedDateFromSQlForTexting(String date)
+{
+  final dateFromString = DateTime.parse(date);
+  final DateFormat formatter = DateFormat('HH:mm, E, MMM, y');
+  final String formatted = formatter.format(dateFromString);
+  return formatted;
+}
 DateTime getFormatedDate(DateTime dateTime)
 {
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
