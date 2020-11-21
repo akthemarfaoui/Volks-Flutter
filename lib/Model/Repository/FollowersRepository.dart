@@ -67,6 +67,20 @@ class FollowersRepository {
     // return compute(parseUser,response.body);
   }
 
+  Future<int> getCountFollows(String route,[dynamic args]) async {
+    var url = getServerURL(route, args);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)[0]["count(*)"];
+    } else {
+      throw Exception("Thabet ya bhim => status code= " +
+          response.statusCode.toString() +
+          " URI = " +
+          response.request.url.toString());
+    }
+  }
+
   Future<String> deleteFollowers(String route, [dynamic args]) async {
     var url = getServerURL(route, args);
     var response = await http.delete(url);

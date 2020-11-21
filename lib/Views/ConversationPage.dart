@@ -11,7 +11,6 @@ import 'package:volks_demo/Utils/MyColors.dart';
 import 'package:web_socket_channel/io.dart';
 
 
-
 class IConversationView{
 
   void UpdateConversationPage(MessagingViewModel messagingViewModel){}
@@ -63,7 +62,7 @@ class ConversationState extends State<ConversationPage> implements IConversation
       msg.message = jsonDecode(onData)["message"];
       msg.send_in = jsonDecode(onData)["send_in"];
       this.messageToSend.text= "";
-      print(jsonDecode(onData)["send_in"]);
+
       setState(() {
 
         this.list_conversation.add(msg);
@@ -231,6 +230,7 @@ class ConversationState extends State<ConversationPage> implements IConversation
     Message msgToSend =new Message.toSend(widget.connectedUser.username,widget.otherUsername,msg);
     channel.sink.add(jsonEncode(msgToSend));
     print(jsonEncode(msgToSend));
+
   }
 
 

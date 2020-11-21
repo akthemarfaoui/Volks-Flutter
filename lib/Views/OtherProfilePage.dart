@@ -6,6 +6,10 @@ import 'package:volks_demo/Model/ViewModel/OtherProfileViewModel.dart';
 import 'package:volks_demo/Presenter/OtherProfilePresenter.dart';
 import 'package:volks_demo/Utils/HttpConfig.dart';
 import 'package:volks_demo/Utils/MyColors.dart';
+import 'package:volks_demo/Views/ConversationPage.dart';
+import 'package:volks_demo/Views/FollowersOtherProfilePage.dart';
+import 'package:volks_demo/Views/FollowingOtherProfilePage.dart';
+import 'package:volks_demo/Views/PostsOtherProfilePage.dart';
 
 class IOtherProfileView {
   void updateOtherProfilePage(OtherProfileViewModel otherProfileViewModel) {}
@@ -26,6 +30,10 @@ class OtherProfilePageState extends State<OtherProfilePage>
   GlobalKey keyForm = new GlobalKey();
   bool hide = false;
   bool hide2 = false;
+
+  int followers_num = 0;
+  int following_num = 0;
+  int posts_num = 0;
   var FirstNameController = TextEditingController();
   var LastNameController = TextEditingController();
   var PhoneNumberController = TextEditingController();
@@ -41,6 +49,9 @@ class OtherProfilePageState extends State<OtherProfilePage>
   @override
   void updateOtherProfilePage(OtherProfileViewModel otherProfileViewModel) {
     setState(() {
+      this.followers_num = otherProfileViewModel.followers_num;
+      this.following_num = otherProfileViewModel.following_num;
+      this.posts_num = otherProfileViewModel.posts_num;
       this.isFollowing = otherProfileViewModel.isFollowing;
       this.statusChange = otherProfileViewModel.statusChanged;
       this.didSuccessffullyAdded = otherProfileViewModel.didSuccessfullyAdded;
@@ -82,13 +93,16 @@ class OtherProfilePageState extends State<OtherProfilePage>
     widget.otherProfilePresenter
         .doGetOneFollowers(widget.connectedUser.username, widget.user.username);
 
+    widget.otherProfilePresenter.deGetCountFollowers(widget.user.username);
+    widget.otherProfilePresenter.deGetCountFollowing(widget.user.username);
+    widget.otherProfilePresenter.doGetCountPosts(widget.user.username);
+
     FirstNameController.text = widget.user.first_name ?? "";
     LastNameController.text = widget.user.last_name ?? "";
     PhoneNumberController.text = widget.user.phone_number.toString() ?? "";
     AddressController.text = widget.user.address ?? "";
     ChildNumberController.text = widget.user.number_children.toString() ?? 0;
-    DChildNumberController.text =
-        widget.user.number_children_disabilities.toString() ?? 0;
+    DChildNumberController.text = widget.user.number_children_disabilities.toString() ?? 0;
   }
 
   @override
@@ -120,8 +134,54 @@ class OtherProfilePageState extends State<OtherProfilePage>
                                 Widget>[
                               new Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
+                                  Column(
+                                    children: [
+                                      AnimatedOpacity(
+                                          opacity: hide ? 0 : 1,
+                                          duration: Duration(seconds: 0),
+                                          child: MaterialButton(
+                                            onPressed: () {
+                                              Followers follow =
+                                              Followers.forAdding(
+                                                  username: this
+                                                      .widget
+                                                      .connectedUser
+                                                      .username,
+                                                  following: this
+                                                      .widget
+                                                      .user
+                                                      .username);
+
+                                              this
+                                                  .widget
+                                                  .otherProfilePresenter
+                                                  .doAddFollowers(follow);
+                                            },
+                                            child: Text("S'abonner"),
+                                            color: Colors.white,
+                                          )),
+
+                                      AnimatedOpacity(
+                                          opacity: hide2 ? 0 : 1,
+                                          duration: Duration(seconds: 0),
+                                          child: MaterialButton(
+
+                                            onPressed: () {
+                                              setState(() {
+                                                this.widget.otherProfilePresenter.doDeleteFollowers(this.widget.connectedUser.username, this.widget.user.username);
+                                              });
+                                            },
+                                            child: Text(
+                                              "Se désabonner",
+                                              style: TextStyle(
+                                                  color: Colors.pink),
+                                            ),
+                                            color: Colors.white,
+                                          )),
+                                    ],
+                                  ),
                                   Column(
                                     children: [
                                       Card(
@@ -157,6 +217,20 @@ class OtherProfilePageState extends State<OtherProfilePage>
                                       )
                                     ],
                                   ),
+
+                                  MaterialButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ConversationPage(connectedUser: this.widget.connectedUser,otherUsername: this.widget.user.username, )));
+                                    },
+                                    child: Text("Message"),
+                                    color: Colors.white,
+                                  )
+
+
                                 ],
                               ),
                             ]),
@@ -164,7 +238,130 @@ class OtherProfilePageState extends State<OtherProfilePage>
                         ],
                       ),
                     ),
-                    new Container(
+
+                    Container(
+                      color: Color.fromRGBO(192,192,192, 1),
+                    height: 60,
+                    child: Row(
+
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                      children: [
+                        GestureDetector(
+
+                          onTap: (){
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PostOtherProfilePage(user: this.widget.user,count: this.posts_num,)
+                                ));
+
+
+                          },
+
+                          child: Card(
+
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+
+                              children: [
+                                Text("Posts",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                SizedBox(
+
+                                  height: 10,
+
+                                ),
+                                Text(this.posts_num.toString())
+
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                         GestureDetector(
+
+                            onTap: (){
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          FollowingOtherProfilePage(user: this.widget.user,count: this.following_num,)
+                                  ));
+
+
+                            },
+                            child: Card(
+
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 20,right: 20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+
+                                    children: [
+                                      Text("Followers",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                      SizedBox(
+
+                                        height: 10,
+
+                                      ),
+                                      Text(this.following_num.toString())
+
+                                    ],
+                                  ),
+                                )
+                            ),
+
+                          ),
+
+
+                        GestureDetector(
+
+                          onTap: (){
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        FollowersOtherProfilePage(user: this.widget.user,count: this.followers_num,)
+                                ));
+
+                          },
+
+                          child: Card(
+
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+
+                              children: [
+                                Text("Following",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                SizedBox(
+
+                                  height: 10,
+
+                                ),
+                                Text(this.followers_num.toString())
+
+                              ],
+                            ),
+                          ),
+                        )
+
+                      ],
+                    ),
+
+                    ),
+                    Divider(
+                      color: Colors.black,
+                      height: 25,
+                      thickness: 0.5,
+                      indent: 20,
+                      endIndent: 20,
+                    ),
+                    Container(
                       color: MyColors.bkColor,
                       child: Padding(
                         padding: EdgeInsets.only(bottom: 25.0),
@@ -193,50 +390,7 @@ class OtherProfilePageState extends State<OtherProfilePage>
                                         ),
                                       ],
                                     ),
-                                    new Column(
-                                      children: [
-                                        AnimatedOpacity(
-                                            opacity: hide ? 0 : 1,
-                                            duration: Duration(seconds: 0),
-                                            child: MaterialButton(
-                                              onPressed: () {
-                                                Followers follow =
-                                                    Followers.forAdding(
-                                                        username: this
-                                                            .widget
-                                                            .connectedUser
-                                                            .username,
-                                                        following: this
-                                                            .widget
-                                                            .user
-                                                            .username);
 
-                                                this
-                                                    .widget
-                                                    .otherProfilePresenter
-                                                    .doAddFollowers(follow);
-                                              },
-                                              child: Text("S'abonner"),
-                                              color: Colors.pink,
-                                            )),
-                                        AnimatedOpacity(
-                                            opacity: hide2 ? 0 : 1,
-                                            duration: Duration(seconds: 0),
-                                            child: MaterialButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  this.widget.otherProfilePresenter.doDeleteFollowers(this.widget.connectedUser.username, this.widget.user.username);
-                                                });
-                                              },
-                                              child: Text(
-                                                "Se désabonner",
-                                                style: TextStyle(
-                                                    color: Colors.pink),
-                                              ),
-                                              color: Colors.white,
-                                            )),
-                                      ],
-                                    ),
                                   ],
                                 )),
                             Padding(

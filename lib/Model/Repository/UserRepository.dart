@@ -82,6 +82,7 @@ class UserRepository {
   }
 
 
+
   Future<http.Response> uploadProfileImage(String route,String username,File file) async
   {
     var url = getServerURL(route, []);
@@ -111,6 +112,21 @@ class UserRepository {
     print(response.body);
     return file.path;
 
+  }
+
+
+  Future<List<User>> fetchFollows(String route,[dynamic args]) async {
+    var url = getServerURL(route, args);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return parseUser(response.body);
+    } else {
+      throw Exception("Thabet ya bhim => status code= " +
+          response.statusCode.toString() +
+          " URI = " +
+          response.request.url.toString());
+    }
   }
 
 

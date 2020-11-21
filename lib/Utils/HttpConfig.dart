@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 const String PORT = "3003";
 const String SOCKET_PORT = "3000";
-const String DOMAIN = "192.168.1.3";
+const String DOMAIN = "192.168.1.6";
 const String URL = "http://$DOMAIN:$PORT";
 const String WEB_SOCKET_URL = "ws://$DOMAIN:$SOCKET_PORT";
 
